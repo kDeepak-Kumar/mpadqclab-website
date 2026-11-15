@@ -1,0 +1,61 @@
+
+
+# ===================== MPAD QC Lab – Apache settings =====================
+Options -Indexes
+DirectoryIndex index.html index.php
+AddType application/javascript .js
+AddType text/css .css
+AddType image/webp .webp
+AddType font/woff2 .woff2
+
+# Custom 404 page. If the site lives in a sub-folder (e.g. /newsite/), change to /newsite/404.html
+# and also change <base href="/"> inside 404.html to <base href="/newsite/">
+ErrorDocument 404 /404.html
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+# Force HTTPS and remove www (remove these 4 lines if your SSL is not active yet)
+RewriteCond %{HTTPS} off [OR]
+RewriteCond %{HTTP_HOST} ^www\. [NC]
+RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+</IfModule>
+
+# Old /newsite address forwards to the new site
+RedirectMatch 301 ^/newsite(/.*)?$ /
+
+# Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml text/xml application/xml text/plain
+</IfModule>
+
+# Browser caching (CSS/JS use ?v= version numbers, so long caching is safe)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 week"
+  ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType application/json "access plus 0 seconds"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType image/webp "access plus 6 months"
+  ExpiresByType image/png "access plus 6 months"
+  ExpiresByType image/jpeg "access plus 6 months"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType application/pdf "access plus 1 day"
+</IfModule>
+
+# Security headers
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+</IfModule>
+
+# php -- BEGIN cPanel-generated handler, do not edit
+# Set the “ea-php82” package as the default “PHP” programming language.
+<IfModule mime_module>
+  AddHandler application/x-httpd-ea-php82___lsphp .php .php8 .phtml
+</IfModule>
+# php -- END cPanel-generated handler, do not edit

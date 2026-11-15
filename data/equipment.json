@@ -1,0 +1,114 @@
+{
+ "_help": "Equipment shown on the Equipment page. TO ADD: upload a photo (landscape 4:3, about 1200px wide, JPG/WebP) to /img/equipment/, copy the TEMPLATE block, paste it above, fill in and set published to true. No photo yet? Leave image as \"\" and a neat placeholder is shown. Keep commas between blocks.",
+ "equipment": [
+  {
+   "published": true,
+   "name": "Compression Testing Machine – 2000 kN",
+   "description": "Computer-controlled, digital compression testing for concrete cubes, cement mortar, bricks, blocks and pavers.",
+   "image": "img/compression-testing-machine-960.webp",
+   "tags": [
+    "2000 kN",
+    "Digital",
+    "IS 516"
+   ]
+  },
+  {
+   "published": true,
+   "name": "Hydraulic Rotary Drilling Rig",
+   "description": "Truck-mounted rig with water tanker for boreholes, rock coring and deep soil investigation.",
+   "image": "img/hydraulic-drilling-rig-960.webp",
+   "tags": [
+    "Rotary",
+    "Rock coring",
+    "IS 1892"
+   ]
+  },
+  {
+   "published": true,
+   "name": "SPT Tripod Rigs",
+   "description": "Standard Penetration Test set-up with 63.5 kg hammer and 750 mm free fall, plus sampling tools.",
+   "image": "img/tripod-drilling-rig-960.webp",
+   "tags": [
+    "63.5 kg hammer",
+    "IS 2131"
+   ]
+  },
+  {
+   "published": true,
+   "name": "Los Angeles Abrasion Machine",
+   "description": "Drum-type machine for abrasion resistance and durability of coarse aggregates.",
+   "image": "img/los-angeles-abrasion-machine-960.webp",
+   "tags": [
+    "IS 2386 (Pt 4)"
+   ]
+  },
+  {
+   "published": true,
+   "name": "Rebar Pull-Out Test Equipment",
+   "description": "Hydraulic pull-out system with digital load reading for anchorage and bond verification on site.",
+   "image": "img/rebar-pull-out-test-setup-960.webp",
+   "tags": [
+    "Hydraulic",
+    "On-site",
+    "IS 2770"
+   ]
+  },
+  {
+   "published": true,
+   "name": "NDT Kit – Rebound Hammer, UPV, Cover Meter",
+   "description": "Field kit for in-situ assessment of concrete strength, uniformity and cover.",
+   "image": "img/ndt-testing-column-960.webp",
+   "tags": [
+    "IS 516 (Pt 5)",
+    "IS 13311"
+   ]
+  },
+  {
+   "published": true,
+   "name": "HEICO Precision Pressure Gauge",
+   "description": "High-accuracy load measurement for hydraulic test systems, read in kilonewtons.",
+   "image": "img/heico-pressure-gauge-960.webp",
+   "tags": [
+    "0 – 500 kN",
+    "Calibrated"
+   ]
+  },
+  {
+   "published": true,
+   "name": "Concrete Beam Moulds",
+   "description": "Standard moulds for casting beams for flexural strength testing of concrete.",
+   "image": "img/concrete-beam-mould-960.webp",
+   "tags": [
+    "IS 516"
+   ]
+  },
+  {
+   "published": true,
+   "name": "Core Boxes & Sample Logging",
+   "description": "Labelled core boxes and sample protection for traceable rock and soil cores.",
+   "image": "img/rock-core-box-960.webp",
+   "tags": [
+    "Chain of custody"
+   ]
+  },
+  {
+   "published": true,
+   "name": "Dewatering Pumps",
+   "description": "Site pumps for borehole and field-test operations below the water table.",
+   "image": "img/field-pumps-site-setup-960.webp",
+   "tags": [
+    "Field support"
+   ]
+  },
+  {
+   "published": false,
+   "name": "TEMPLATE – e.g. Universal Testing Machine 1000 kN",
+   "description": "One line about what it tests.",
+   "image": "img/equipment/your-photo.jpg",
+   "tags": [
+    "IS 1608",
+    "1000 kN"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,14 @@
+{
+ "_help": "Extra testing services shown on the Services page under 'More testing services' and added to every enquiry form's service list. TO ADD: copy the TEMPLATE block, fill it in and set published to true. (For a full dedicated service page with its own Google ranking, ask your developer.)",
+ "services": [
+  {
+   "published": false,
+   "name": "TEMPLATE – e.g. Calibration of site equipment",
+   "description": "One or two lines describing the service.",
+   "tests": [
+    "Test 1",
+    "Test 2"
+   ]
+  }
+ ]
+}

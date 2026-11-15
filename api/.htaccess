@@ -1,0 +1,5 @@
+# Block direct access to settings and stored enquiries
+<FilesMatch "^(config\.php|.*\.log|.*\.csv|.*\.json)$">
+  Require all denied
+</FilesMatch>
+Options -Indexes

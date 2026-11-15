@@ -1,0 +1,10 @@
+# Admin area: only index.php is reachable; settings and anything else are blocked
+Options -Indexes
+DirectoryIndex index.php
+<FilesMatch "^(config\.php|lib\.php)$">
+  Require all denied
+</FilesMatch>
+<IfModule mod_headers.c>
+  Header always set X-Robots-Tag "noindex, nofollow"
+  Header always set Cache-Control "no-store"
+</IfModule>

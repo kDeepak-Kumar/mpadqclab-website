@@ -1,0 +1,105 @@
+{
+ "_help": "Photos on the Gallery page. TO ADD: upload the photo to /img/gallery/ (about 1600px wide, JPG/WebP), then add a line like {\"image\": \"img/gallery/my-photo.jpg\", \"caption\": \"What the photo shows\"}, with a comma between lines. New photos appear in the order listed; put a line at the top to show it first.",
+ "photos": [
+  {
+   "image": "img/marine-borehole-barge-1440.webp",
+   "thumb": "img/marine-borehole-barge-960.webp",
+   "caption": "Marine borehole investigation from a barge"
+  },
+  {
+   "image": "img/spt-drilling-team-1440.webp",
+   "thumb": "img/spt-drilling-team-960.webp",
+   "caption": "SPT drilling crew at work"
+  },
+  {
+   "image": "img/hydraulic-drilling-rig-1440.webp",
+   "thumb": "img/hydraulic-drilling-rig-960.webp",
+   "caption": "Hydraulic rotary drilling rig at site"
+  },
+  {
+   "image": "img/pull-out-test-team-1440.webp",
+   "thumb": "img/pull-out-test-team-960.webp",
+   "caption": "Rebar pull-out test on a slab"
+  },
+  {
+   "image": "img/rebound-hammer-pier-1440.webp",
+   "thumb": "img/rebound-hammer-pier-960.webp",
+   "caption": "Rebound hammer grid testing on an RCC pier"
+  },
+  {
+   "image": "img/ndt-testing-column-1440.webp",
+   "thumb": "img/ndt-testing-column-960.webp",
+   "caption": "NDT testing of a concrete column"
+  },
+  {
+   "image": "img/compression-testing-machine-1440.webp",
+   "thumb": "img/compression-testing-machine-960.webp",
+   "caption": "2000 kN digital compression testing machine"
+  },
+  {
+   "image": "img/rock-core-box-1440.webp",
+   "thumb": "img/rock-core-box-960.webp",
+   "caption": "Rock cores logged in a core box"
+  },
+  {
+   "image": "img/soil-samples-labelled-1440.webp",
+   "thumb": "img/soil-samples-labelled-960.webp",
+   "caption": "Labelled soil samples ready for the lab"
+  },
+  {
+   "image": "img/spt-tripod-site-1440.webp",
+   "thumb": "img/spt-tripod-site-960.webp",
+   "caption": "SPT tripod rig and water tanker at site"
+  },
+  {
+   "image": "img/tripod-drilling-rig-1440.webp",
+   "thumb": "img/tripod-drilling-rig-960.webp",
+   "caption": "Tripod drilling set-up"
+  },
+  {
+   "image": "img/borehole-drilling-site-1440.webp",
+   "thumb": "img/borehole-drilling-site-960.webp",
+   "caption": "Borehole drilling in progress"
+  },
+  {
+   "image": "img/soil-sampling-auger-1440.webp",
+   "thumb": "img/soil-sampling-auger-960.webp",
+   "caption": "Hand-auger soil sampling"
+  },
+  {
+   "image": "img/field-pressure-test-1440.webp",
+   "thumb": "img/field-pressure-test-960.webp",
+   "caption": "Field pressure test by MPAD technician"
+  },
+  {
+   "image": "img/los-angeles-abrasion-machine-1440.webp",
+   "thumb": "img/los-angeles-abrasion-machine-960.webp",
+   "caption": "Los Angeles abrasion machine"
+  },
+  {
+   "image": "img/heico-pressure-gauge-1440.webp",
+   "thumb": "img/heico-pressure-gauge-960.webp",
+   "caption": "Calibrated HEICO pressure gauge"
+  },
+  {
+   "image": "img/rebar-pull-out-test-setup-1440.webp",
+   "thumb": "img/rebar-pull-out-test-setup-960.webp",
+   "caption": "Pull-out test equipment set-up"
+  },
+  {
+   "image": "img/concrete-beam-mould-1440.webp",
+   "thumb": "img/concrete-beam-mould-960.webp",
+   "caption": "Concrete beam mould for flexural tests"
+  },
+  {
+   "image": "img/field-pumps-site-setup-1440.webp",
+   "thumb": "img/field-pumps-site-setup-960.webp",
+   "caption": "Dewatering pumps for field operations"
+  },
+  {
+   "image": "img/mpad-lab-building-1440.webp",
+   "thumb": "img/mpad-lab-building-960.webp",
+   "caption": "MPAD QC Lab building, Hardware Park"
+  }
+ ]
+}

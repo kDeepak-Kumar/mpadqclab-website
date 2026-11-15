@@ -1,0 +1,25 @@
+{
+  "_help": "Clients shown on the Home page (featured: true) and the Projects page (all). To add a client, copy one block, change the name/sector, and keep the commas between blocks. Optional logo: upload an image to /img/clients/ and set \"logo\": \"img/clients/file-name.png\". Set \"show\": false to hide a client without deleting it.",
+  "clients": [
+    { "name": "Tata Projects", "sector": "Infrastructure", "featured": true, "logo": "img/client-tata-projects.webp" },
+    { "name": "Microsoft India", "sector": "Corporate campus", "featured": true },
+    { "name": "GMR Infrastructure", "sector": "Infrastructure", "featured": true },
+    { "name": "Adani Group", "sector": "Infrastructure", "featured": true },
+    { "name": "UltraTech Cement", "sector": "Industrial", "featured": true },
+    { "name": "Foxconn Technology", "sector": "Industrial", "featured": true },
+    { "name": "My Home Group", "sector": "Real estate", "featured": true },
+    { "name": "Aparna Constructions", "sector": "Real estate", "featured": true },
+    { "name": "Ramky Infrastructure", "sector": "Infrastructure", "featured": true },
+    { "name": "Rajapushpa Properties", "sector": "Real estate", "featured": true },
+    { "name": "CISF", "sector": "Government", "featured": true },
+    { "name": "CDAC Hyderabad", "sector": "Government", "featured": true },
+    { "name": "Chettinad Cement", "sector": "Industrial" },
+    { "name": "Blue Dart Express", "sector": "Logistics" },
+    { "name": "Malla Reddy University", "sector": "Institutional" },
+    { "name": "Malabar Gold", "sector": "Commercial" },
+    { "name": "JC Brothers", "sector": "Commercial" },
+    { "name": "Ardee Engineering", "sector": "Industrial" },
+    { "name": "Suroj Buildtech", "sector": "Real estate" },
+    { "name": "Raghava Constructions", "sector": "Construction" }
+  ]
+}

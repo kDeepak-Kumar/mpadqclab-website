@@ -1,0 +1,6 @@
+# Secrets & runtime data — never commit
+api/config.php
+admin/config.php
+api/storage/
+*.log
+node_modules/
