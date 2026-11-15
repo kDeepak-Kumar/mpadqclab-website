@@ -196,3 +196,14 @@ No website can guarantee the #1 position. Accurate content plus reviews, a consi
 - **Strongly recommended:** each admin should go to **My account → Set up 2-step verification** and add the key to Google Authenticator or Microsoft Authenticator
 
 **Upload limit:** if uploads over 2 MB fail, open cPanel → **MultiPHP INI Editor** → select `mpadqclab.com` → set `upload_max_filesize` to `12M` and `post_max_size` to `14M`.
+
+---
+
+## Design system v2 ("Precision"), November 2026
+
+Visual redesign only: no content, URLs, forms or integrations changed.
+
+- **Styles:** `css/site.css`, with design tokens (colours, radii, shadows, fonts) at the top in `:root`.
+- **Fonts (self-hosted, SIL Open Font License):** Geist (text), Geist Mono (labels/specs), Instrument Serif italic (one accent phrase per headline). Files are in `fonts/`.
+- **Script additions** (end of `js/main.js`, presentation only): scroll-progress line, active-page marker in the menu, scroll reveals for headings/cards, cursor light on service cards. All of it respects "reduce motion".
+- **Footer wordmark:** the large "MPAD QC LAB" in the footer is decorative (`aria-hidden`).

@@ -302,4 +302,33 @@
   var qs = new URLSearchParams(location.search), sv = qs.get('service'), ty = qs.get('type');
   if (sv) $$('select[name=service]').forEach(function (s) { s.value = sv; });
   if (ty) $$('input[name=enquiry_type]').forEach(function (r) { if (r.value === ty) { r.checked = true; r.dispatchEvent(new Event('change')); } });
+
+  /* ---------- Presentation layer (v2 redesign): purely visual, no content or behaviour changes ---------- */
+  /* Mark the current page in the main nav */
+  var here = location.pathname.replace(/index\.html$/, '');
+  $$('.nav > a').forEach(function (a) {
+    var p = new URL(a.href, location.href).pathname;
+    if (p.length > 1 && here.indexOf(p) === 0 && !a.hasAttribute('aria-current')) a.setAttribute('aria-current', 'page');
+  });
+  /* Scroll progress hairline */
+  var bar = d.createElement('div'); bar.className = 'progress-bar'; bar.setAttribute('aria-hidden', 'true'); d.body.appendChild(bar);
+  var pTick = false;
+  function prog() { pTick = false; var h2 = d.documentElement.scrollHeight - innerHeight; bar.style.setProperty('--sp', h2 > 0 ? (scrollY / h2).toFixed(4) : 0); }
+  addEventListener('scroll', function () { if (!pTick) { pTick = true; requestAnimationFrame(prog); } }, { passive: true }); prog();
+  /* Gentle reveal for section headings, cards and blocks that had no reveal class */
+  if (!reduce) {
+    $$('.sec-head, .svc-layout .prose > h2, .test-table, .c-item, .card, .faq, .clients, .stats, .timeline li:not(.rv), .gallery').forEach(function (el, i) {
+      if (el.closest('.phero, .hero, .drawer, .story') || el.classList.contains('rv')) return;
+      el.classList.add('rv');
+    });
+    watchReveal();
+  }
+  /* Cursor-follow light on service cards */
+  if (!reduce && matchMedia('(hover:hover)').matches) {
+    d.addEventListener('pointermove', function (e) {
+      var c = e.target.closest && e.target.closest('.svc'); if (!c) return;
+      var r = c.getBoundingClientRect();
+      c.style.setProperty('--mx', (e.clientX - r.left) + 'px'); c.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    }, { passive: true });
+  }
 })();
