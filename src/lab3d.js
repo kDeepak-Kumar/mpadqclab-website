@@ -6,6 +6,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
 
 const C = { clay: 0xefece6, clay2: 0xe0dcd4, clay3: 0xcfcac1, concrete: 0xd9d5cd, graphite: 0x2a3140, graphite2: 0x3b4352, chrome: 0xc9d0d8, ink: 0x0a1424, amber: 0xf2b01e, asphalt: 0x2f3238, rebar: 0x55504c, brick: 0xc98f6d };
 const UP = new THREE.Vector3(0, 1, 0);
@@ -85,6 +86,87 @@ function ctm(g, { width = 2.2, ramTop = 1.0, crossY = 3.1, platenR = .55, panel 
   return { ram, top, topY: crossY - .32 };
 }
 function floor(g, w = 9, d = 7) { const f = B(w, .2, d, M(0xf3f0ea, { roughness: 1 }), 0, -.1, 0, true, g); f.castShadow = false; f.userData.floor = true; return f; }
+
+
+/* surveying scenes: terrain or flat plot + total station + roaming prism pole */
+function surveyScene(kind) {
+  const g = new THREE.Group();
+  const hgt = (x, z) => kind === 'topo' ? .42 * Math.sin(x * .55 + .6) * Math.cos(z * .5) + .22 * Math.sin(x * .25 + z * .45) + .12 * Math.cos(z * .9 - x * .2) : 0;
+  const SZ = 8, NS = 64;
+  const tg = new THREE.PlaneGeometry(SZ, SZ * .75, NS, NS * .75); tg.rotateX(-Math.PI / 2);
+  const tp = tg.attributes.position; for (let i = 0; i < tp.count; i++) tp.setY(i, hgt(tp.getX(i), tp.getZ(i)));
+  tg.computeVertexNormals();
+  const ground = mesh(tg, M(0xe9e3d6, { roughness: 1 }), 0, 0, 0, false, g); ground.castShadow = false;
+  // plinth sides so the terrain reads as a model
+  const base = B(SZ, .5, SZ * .75, M(0xd8d1c4), 0, -.55, 0, true, g); base.castShadow = false;
+  // contour lines (marching squares on the height field)
+  const cl = []; const lv = [-.4, -.25, -.1, .05, .2, .35, .5];
+  if (kind === 'topo') {
+    const n = 90, x0 = -SZ / 2, z0 = -SZ * .375, dx = SZ / n, dz = SZ * .75 / n;
+    lv.forEach(L => { const pts = [];
+      for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+        const xa = x0 + i * dx, za = z0 + j * dz, c = [[xa, za], [xa + dx, za], [xa + dx, za + dz], [xa, za + dz]], v = c.map(([x, z]) => hgt(x, z) - L);
+        const e = []; for (let k = 0; k < 4; k++) { const a = v[k], b = v[(k + 1) % 4]; if ((a < 0) !== (b < 0)) { const t = a / (a - b), p0 = c[k], p1 = c[(k + 1) % 4]; e.push(new THREE.Vector3(p0[0] + (p1[0] - p0[0]) * t, L + .015, p0[1] + (p1[1] - p0[1]) * t)); } }
+        if (e.length >= 2) pts.push(e[0], e[1]); if (e.length === 4) pts.push(e[2], e[3]);
+      }
+      const ls = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), new THREE.LineBasicMaterial({ color: 0xc98a00, transparent: true, opacity: 0 })); g.add(ls); cl.push(ls); });
+  }
+  // total station on tripod
+  const TS = new THREE.Vector3(-2.4, hgt(-2.4, 1.6), 1.6), apex = TS.clone().add(new THREE.Vector3(0, 1.3, 0));
+  [[-.4, -.3], [.4, -.3], [0, .45]].forEach(([a, b]) => { const f = new THREE.Vector3(TS.x + a, hgt(TS.x + a, TS.z + b), TS.z + b), len = f.distanceTo(apex); const leg = mesh(new THREE.CylinderGeometry(.025, .035, len, 8), M(0xd9cbb3), 0, 0, 0, false, g); leg.position.copy(f).add(apex).multiplyScalar(.5); leg.quaternion.setFromUnitVectors(UP, apex.clone().sub(f).normalize()); });
+  const head = new THREE.Group(); head.position.copy(apex); g.add(head);
+  B(.26, .06, .26, metal(C.graphite), 0, .03, 0, true, head); B(.24, .34, .18, M(0xf2b01e, { roughness: .5 }), 0, .23, 0, true, head);
+  const scope = Cy(.055, .055, .26, metal(C.graphite), 0, .3, .06, 16, false, head); scope.rotation.x = Math.PI / 2;
+  // prism pole + surveyor figure
+  const pole = new THREE.Group(); g.add(pole);
+  Cy(.018, .018, 1.6, M(0xf3f0ea), 0, .8, 0, 8, false, pole); Cy(.08, .08, .06, metal(C.graphite), 0, 1.62, 0, 20, true, pole);
+  const fig = M(0xf6f4f0); Cy(.11, .08, .85, fig, .22, .43, 0, 12, false, pole); mesh(new THREE.SphereGeometry(.1, 14, 10), fig, .22, .97, 0, false, pole);
+  const beam = new THREE.Line(new THREE.BufferGeometry().setFromPoints([apex.clone().add(new THREE.Vector3(0, .3, 0)), new THREE.Vector3()]), new THREE.LineBasicMaterial({ color: 0xf2b01e, transparent: true, opacity: .9 })); g.add(beam);
+  // survey path / pegs
+  let route = [], markers;
+  if (kind === 'topo') {
+    for (let r = 0; r < 6; r++) for (let c = 0; c < 8; c++) { const x = -3.3 + (r % 2 ? 7 - c : c) * .95, z = -2.4 + r * .95; route.push(new THREE.Vector3(x, hgt(x, z), z)); }
+    markers = new THREE.InstancedMesh(new THREE.ConeGeometry(.05, .14, 6), M(0xf2b01e, { roughness: .5 }), route.length); markers.count = 0; g.add(markers);
+  } else {
+    // drawing of the building grid (ghost) + pegs at 9 intersections
+    const gx = [-1.4, .4, 2.2], gz = [-1.9, -.4, 1.1];
+    gx.forEach(x => gz.forEach(z => route.push(new THREE.Vector3(x, 0, z))));
+    const ghost = new THREE.Group(); g.add(ghost);
+    const gm = new THREE.LineDashedMaterial({ color: 0x3e6fd8, dashSize: .12, gapSize: .08, transparent: true, opacity: .8 });
+    gx.forEach(x => { const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(x, .01, -2.5), new THREE.Vector3(x, .01, 1.7)]), gm); l.computeLineDistances(); ghost.add(l); });
+    gz.forEach(z => { const l = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-2, .01, z), new THREE.Vector3(2.8, .01, z)]), gm); l.computeLineDistances(); ghost.add(l); });
+    g.userData.ghost = ghost;
+    markers = new THREE.InstancedMesh(new THREE.BoxGeometry(.06, .3, .06), M(0xc69a5c), route.length); markers.count = 0; g.add(markers);
+    const strings = new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(gx.flatMap(x => [new THREE.Vector3(x, .25, gz[0]), new THREE.Vector3(x, .25, gz[2])]).concat(gz.flatMap(z => [new THREE.Vector3(gx[0], .25, z), new THREE.Vector3(gx[2], .25, z)]))), new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 })); g.add(strings); g.userData.strings = strings;
+  }
+  const mt = new THREE.Matrix4(), qq = new THREE.Quaternion(), sc = new THREE.Vector3(1, 1, 1), ps = new THREE.Vector3();
+  const tot = route.length;
+  return {
+    group: g, cam: kind === 'topo' ? [[3.6, 4.4, 6.4], [0, 0, 0]] : [[3.2, 4.8, 5.6], [.4, 0, -.3]], zoom: 1.12, dur: kind === 'topo' ? 10 : 8,
+    steps: kind === 'topo' ? [0, .1, .3, .78] : [0, .1, .22, .82],
+    update(p) {
+      const u = seg(p, .12, .76), k = u * (tot - 1), i = Math.floor(k), f = k - i;
+      const a = route[Math.min(i, tot - 1)], b = route[Math.min(i + 1, tot - 1)];
+      ps.copy(a).lerp(b, ease(Math.min(1, f * 1.6))); pole.position.copy(ps);
+      head.rotation.y = Math.atan2(ps.x - apex.x, ps.z - apex.z);
+      beam.geometry.attributes.position.setXYZ(1, ps.x, ps.y + 1.62, ps.z); beam.geometry.attributes.position.needsUpdate = true;
+      beam.visible = p > .12 && p < .78 && f > .6;
+      const done = p >= .76 ? tot : Math.min(tot, i + (f > .6 ? 1 : 0));
+      for (let n = 0; n < done; n++) { mt.compose(route[n].clone().add(new THREE.Vector3(0, kind === 'topo' ? .07 : .15, 0)), qq, sc); markers.setMatrixAt(n, mt); }
+      markers.count = done; markers.instanceMatrix.needsUpdate = true;
+      const fin = seg(p, .74, .9);
+      cl.forEach((l, n) => l.material.opacity = clamp01(fin * 1.6 - n * .08) * .95);
+      if (g.userData.ghost) g.userData.ghost.children.forEach(l => l.material.opacity = .25 + (1 - seg(p, .05, .2)) * .55);
+      if (g.userData.strings) g.userData.strings.material.opacity = fin;
+    },
+    read(p) {
+      const n = Math.min(tot, Math.floor(seg(p, .12, .76) * tot + .4));
+      if (kind === 'topo') return { k: 'Points recorded', v: n * 5, u: 'pts', sub: p > .78 ? 'Ground model built · contours at 0.15 m interval' : 'Each point: easting, northing and level', ok: p > .82 ? 'Survey drawing ready for design (illustrative)' : '' };
+      return { k: 'Pegs marked', v: n, u: '/ 9', sub: p > .8 ? 'Grid lines strung · diagonals cross-checked' : n ? `Column ${String.fromCharCode(65 + Math.floor((n - 1) / 3))}${((n - 1) % 3) + 1} located from drawing coordinates` : 'Setting out the column grid', ok: p > .84 ? 'Grid within tolerance (illustrative)' : '' };
+    },
+    chart: kind === 'topo' ? { x: 'Time', y: 'Area mapped', f: u => ease(seg(u, .1, .8)), u: p => p } : { x: 'Time', y: 'Pegs', f: u => Math.floor(seg(u, .12, .76) * 9) / 9, u: p => p },
+  };
+}
 
 /* =====================================================================
    DEMOS — each returns { group, cam:[pos,target], dur, update(p,t), read(p), curve, steps }
@@ -478,6 +560,43 @@ const DEMOS = {
       chart: { x: 'Titrant (ml)', y: 'Colour change', f: u => 1 / (1 + Math.exp(-(u - .9) * 40)), u: p => seg(p, .2, .8) },
     };
   },
+
+  /* ---------------- SURVEYING ---------------- */
+  topo() { return surveyScene('topo'); },
+  setout() { return surveyScene('setout'); },
+
+  /* ---------------- still-only scenes (used for illustrations) ---------------- */
+  samples() {
+    const g = new THREE.Group(); floor(g);
+    B(2.6, .5, 1.6, M(0xc9b48d), 0, .25, 0, true, g); // crate
+    const kraft = M(0xd8c3a0, { roughness: 1 });
+    for (let i = 0; i < 4; i++) { const b = mesh(new RoundedBoxGeometry(.5, .32, .38, 3, .08), kraft, -.9 + i * .58, .66, -.35, false, g); b.rotation.y = (i % 2 ? .12 : -.08); const tag = B(.22, .12, .01, M(0xffffff), 0, .02, .2, false, b); tag.rotation.x = -.3; }
+    for (let i = 0; i < 3; i++) B(.34, .34, .34, M(C.concrete), -.8 + i * .45, .67, .35, true, g);
+    const cb = B(1.0, .14, .5, M(C.clay3), .85, .57, .38, true, g);
+    for (let k = 0; k < 3; k++) { const c = Cy(.07, .07, .9, M(0xbcb6ac), .85, .69, .23 + k * .15, 16, false, g); c.rotation.z = Math.PI / 2; }
+    for (let k = 0; k < 4; k++) { const r = Cy(.025, .025, 1.1, M(C.rebar, { metalness: .6, roughness: .45 }), -.1 + k * .06, .55, .02, 8, false, g); r.rotation.z = Math.PI / 2; r.rotation.y = .4; }
+    return { group: g, cam: [[2.4, 2.2, 3.2], [0, .6, 0]], dur: 1, steps: [0], update() {}, read() { return { k: '', v: '', u: '', sub: '' }; }, chart: { x: '', y: '', f: () => 0, u: () => 0 } };
+  },
+  report() {
+    const g = new THREE.Group(); floor(g);
+    const tex = canvasTex(512, 724, (c, w, h) => {
+      c.fillStyle = '#ffffff'; c.fillRect(0, 0, w, h);
+      c.fillStyle = '#0a1424'; c.fillRect(40, 40, 200, 26); c.fillStyle = '#9aa3ad'; c.fillRect(40, 76, 300, 10); c.fillRect(40, 94, 260, 10);
+      c.strokeStyle = '#cfd5dc'; c.lineWidth = 2; for (let r = 0; r < 9; r++) { c.strokeRect(40, 140 + r * 34, w - 80, 34); } c.beginPath(); c.moveTo(240, 140); c.lineTo(240, 446); c.moveTo(360, 140); c.lineTo(360, 446); c.stroke();
+      c.fillStyle = '#0a1424'; for (let r = 0; r < 9; r++) { c.fillRect(52, 152 + r * 34, 120 + (r * 37) % 60, 9); c.fillRect(252, 152 + r * 34, 70, 9); c.fillStyle = r % 3 ? '#0a1424' : '#1fa855'; c.fillRect(372, 152 + r * 34, 60, 9); c.fillStyle = '#0a1424'; }
+      c.fillStyle = '#9aa3ad'; for (let r = 0; r < 5; r++) c.fillRect(40, 480 + r * 18, w - 80 - (r % 2) * 90, 8);
+      c.strokeStyle = '#f2b01e'; c.lineWidth = 6; c.beginPath(); c.arc(w - 110, h - 110, 58, 0, 7); c.stroke(); c.lineWidth = 2; c.beginPath(); c.arc(w - 110, h - 110, 44, 0, 7); c.stroke();
+      c.fillStyle = '#f2b01e'; c.font = 'bold 22px monospace'; c.textAlign = 'center'; c.fillText('TESTED', w - 110, h - 104);
+      c.strokeStyle = '#0a1424'; c.lineWidth = 3; c.beginPath(); c.moveTo(60, h - 100); c.bezierCurveTo(100, h - 140, 140, h - 60, 190, h - 110); c.bezierCurveTo(210, h - 125, 230, h - 95, 260, h - 105); c.stroke();
+    });
+    const sheetM = new THREE.MeshStandardMaterial({ map: tex, roughness: .8 });
+    const plain = M(0xf7f6f2);
+    for (let i = 0; i < 5; i++) { const sh = B(1.42, .012, 2.0, i === 4 ? [plain, plain, sheetM, plain, plain, plain] : plain, (i - 2) * .05, .02 + i * .014, (2 - i) * .03, false, g); sh.rotation.y = (i - 2) * .05; }
+    const clip = B(1.6, .04, 2.24, M(0x2a3140, { roughness: .5 }), -.02, .0, .02, true, g); clip.position.y = 0.0;
+    B(.5, .08, .12, metal(C.chrome), 0, .1, -1.02, true, g);
+    const pen = Cy(.035, .035, 1.1, M(0x0a1424, { roughness: .3 }), .95, .06, .2, 16, false, g); pen.rotation.z = Math.PI / 2; pen.rotation.y = .5;
+    return { group: g, cam: [[1.4, 2.6, 2.4], [0, 0, 0]], dur: 1, steps: [0], update() {}, read() { return { k: '', v: '', u: '', sub: '' }; }, chart: { x: '', y: '', f: () => 0, u: () => 0 } };
+  },
   /* ---------------- ROAD ---------------- */
   marshall() {
     const g = new THREE.Group(); floor(g);
@@ -542,18 +661,18 @@ function init(section) {
   const bar = section.querySelector('.lab-progress i'), playBtn = section.querySelector('[data-lab-play]'), replayBtn = section.querySelector('[data-lab-replay]');
 
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, matchMedia('(pointer: coarse)').matches ? 1.5 : 1.6));
   renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .9;
   renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFShadowMap;
   host.appendChild(renderer.domElement);
   const scene = new THREE.Scene(); scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), .04).texture; scene.environmentIntensity = .5;
-  const key = new THREE.DirectionalLight(0xfff6ea, 2.2); key.position.set(-5, 9, 6); key.castShadow = true; key.shadow.mapSize.set(2048, 2048);
+  const key = new THREE.DirectionalLight(0xfff6ea, 2.2); key.position.set(-5, 9, 6); key.castShadow = true; key.shadow.mapSize.set(1536, 1536);
   Object.assign(key.shadow.camera, { left: -6, right: 6, top: 6, bottom: -6, near: 1, far: 30 }); key.shadow.bias = -.0003; key.shadow.normalBias = .02; key.shadow.radius = 3; scene.add(key);
   const rim = new THREE.DirectionalLight(0xbcd0ff, .55); rim.position.set(6, 4, -5); scene.add(rim);
   scene.add(new THREE.HemisphereLight(0xffffff, 0x1a2436, .35));
   const camera = new THREE.PerspectiveCamera(30, 1, .05, 100);
   const controls = new OrbitControls(camera, renderer.domElement);
-  Object.assign(controls, { enableDamping: true, dampingFactor: .08, enablePan: false, enableZoom: false, rotateSpeed: .6, maxPolarAngle: Math.PI * .49, minDistance: 1.5, maxDistance: 14 });
+  Object.assign(controls, { enableDamping: true, dampingFactor: .08, enablePan: false, enableZoom: false, rotateSpeed: .6, maxPolarAngle: Math.PI * .49, minDistance: 1.5, maxDistance: 16 });
   renderer.domElement.style.touchAction = 'pan-y';
   section.querySelectorAll('[data-lab-zoom]').forEach(b => b.addEventListener('click', () => { const off = camera.position.clone().sub(controls.target); off.multiplyScalar(b.getAttribute('data-lab-zoom') === 'in' ? .8 : 1.25); off.clampLength(controls.minDistance, controls.maxDistance); goalPos.copy(controls.target).add(off); user = false; }));
 
@@ -623,6 +742,7 @@ function init(section) {
   raf = requestAnimationFrame(loop);
   // studio still: no floor/labels, soft shadow catcher, camera fitted to the rig (used to render the 3D illustrations)
   function still(fitK = 1.08) {
+    controls.maxDistance = 200;
     demo.group.traverse(o => { if (o.userData.floor || o.isSprite) o.visible = false; });
     const box = new THREE.Box3(); demo.group.traverse(o => { if (o.isMesh && o.visible && !o.userData.floor) box.expandByObject(o); });
     const sz = box.getSize(new THREE.Vector3()), cen = box.getCenter(new THREE.Vector3()), r = Math.max(sz.x, sz.z) * .85;

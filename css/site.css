@@ -964,3 +964,80 @@ html.atlas-lock,html.atlas-lock body{overflow:hidden}
 .phero-cluster .c2{width:42%;left:-2%;bottom:0;z-index:3;animation-delay:.25s,2.2s}
 .phero-cluster .c3{width:40%;right:-2%;bottom:4%;z-index:1;animation-delay:.4s,3.1s}
 @media (max-width:860px){.phero--cluster .wrap{grid-template-columns:1fr}.phero-cluster{height:260px;max-width:460px;width:100%;margin:6px auto 0}}
+/* Lenis smooth scrolling */
+html.has-lenis,html.has-lenis body{height:auto}
+.has-lenis .lenis-smooth{scroll-behavior:auto!important}
+html.has-lenis{scroll-behavior:auto}
+.lenis.lenis-stopped{overflow:hidden}
+.svc .img-3d{background:radial-gradient(ellipse at 50% 60%,#1a2c52,#0b1528);display:grid;place-items:center}
+.svc .img-3d img{object-fit:contain!important;width:86%!important;height:86%!important;filter:drop-shadow(0 18px 24px rgba(0,0,0,.5))}
+.phero-art--solo .phero-3d{max-width:560px}
+
+/* =========================================================================
+   PROCESS — "From your site to a signed NABL report" (home)
+   ========================================================================= */
+.process{position:relative;background:radial-gradient(ellipse 60% 50% at 80% 20%,#16284c 0%,#0a1428 55%,#070d18 100%);color:var(--on-dark);padding:clamp(80px,10vw,140px) 0;overflow:clip}
+.process::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);background-size:96px 96px;-webkit-mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent);mask-image:linear-gradient(transparent,#000 15%,#000 85%,transparent)}
+.pr-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:clamp(32px,6vw,96px);align-items:start;position:relative}
+.pr-head{position:sticky;top:120px}
+.pr-head h2{color:#fff;font-size:clamp(2.2rem,4.4vw,3.6rem);max-width:13ch}
+.pr-head h2 em{color:var(--amber)}
+.pr-head .lead{color:#aebad0;margin:18px 0 34px}
+.pr-head .eyebrow{color:#c6d1e3}
+.pr-meter{list-style:none;margin:0;padding:0 0 0 22px;position:relative;display:grid;gap:16px}
+.pr-meter::before{content:"";position:absolute;left:4px;top:6px;bottom:6px;width:2px;background:rgba(255,255,255,.1);border-radius:2px}
+.pr-meter::after{content:"";position:absolute;left:4px;top:6px;width:2px;height:calc((100% - 12px) * var(--pp,0));background:var(--amber);border-radius:2px;box-shadow:0 0 12px rgba(242,176,30,.6)}
+.pr-meter li{display:flex;gap:14px;align-items:baseline;color:#7f8da8;font-size:.95rem;transition:color .5s}
+.pr-meter li b{font-family:var(--f-mono);font-size:.7rem;font-weight:500;color:inherit}
+.pr-meter li.is-on{color:#fff}
+.pr-meter li.is-on b{color:var(--amber)}
+.pr-steps{list-style:none;margin:0;padding:0;display:grid;gap:clamp(20px,3vw,32px)}
+.pr-step{position:relative;border-radius:30px;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.02));border:1px solid rgba(255,255,255,.08);box-shadow:inset 0 1px 0 rgba(255,255,255,.06);opacity:.45;transform:translateY(24px) scale(.985);transition:opacity .8s var(--ease-out),transform .9s var(--ease-out),border-color .6s}
+.pr-step.is-on{opacity:1;transform:none;border-color:rgba(242,176,30,.35)}
+.pr-art{height:clamp(220px,26vw,320px);display:grid;place-items:center;background:radial-gradient(ellipse 60% 70% at 50% 60%,rgba(62,111,216,.25),transparent 70%);position:relative}
+.pr-art img{max-height:86%;max-width:80%;width:auto;object-fit:contain;filter:drop-shadow(0 30px 40px rgba(0,0,0,.55));transition:transform 1.2s var(--ease-out)}
+.pr-step.is-on .pr-art img{transform:translateY(-6px) scale(1.03)}
+.pr-copy{padding:24px clamp(22px,3vw,34px) 30px;position:relative}
+.pr-n{position:absolute;right:clamp(22px,3vw,34px);top:-34px;font-size:clamp(4rem,7vw,6rem);font-weight:700;letter-spacing:-.06em;line-height:1;color:transparent;-webkit-text-stroke:1px rgba(255,255,255,.18)}
+.pr-step.is-on .pr-n{-webkit-text-stroke-color:rgba(242,176,30,.7)}
+.pr-tag{display:inline-block;font-family:var(--f-mono);font-size:.62rem;letter-spacing:.12em;text-transform:uppercase;color:var(--amber);background:rgba(242,176,30,.1);border:1px solid rgba(242,176,30,.25);padding:.45em .8em;border-radius:999px;margin-bottom:14px}
+.pr-copy h3{color:#fff;font-size:clamp(1.35rem,2vw,1.7rem);margin-bottom:8px}
+.pr-copy p{color:#aebad0;margin:0;font-size:1rem;line-height:1.6;max-width:52ch}
+@media (max-width:900px){.pr-grid{grid-template-columns:1fr}.pr-head{position:relative;top:auto}.pr-meter{display:none}}
+@media (prefers-reduced-motion:reduce){.pr-step{opacity:1;transform:none}}
+
+/* =========================================================================
+   PERFORMANCE: no backdrop-filter over live WebGL canvases (forces a blur of the
+   moving scene every frame). Solid tinted surfaces instead — same look, far cheaper.
+   ========================================================================= */
+.atlas--live .atlas-ch{backdrop-filter:none!important;-webkit-backdrop-filter:none!important;background:linear-gradient(180deg,rgba(20,34,62,.94),rgba(10,19,36,.96))}
+.atlas-pin i,.atlas-pin span,.atlas--live .atlas-tools,.atlas--live .atlas-intro .eyebrow,.atlas-intro-m .eyebrow,.atlas.is-explore .atlas-close,
+.lab-chartbox,.lab-ctrl,.atlas-hint{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.atlas-pin i{background:rgba(10,20,36,.9)}
+.atlas-pin span{background:rgba(10,20,36,.9)}
+.atlas--live .atlas-tools{background:rgba(10,20,36,.9)}
+.lab-chartbox{background:rgba(10,20,36,.82)}
+.lab-ctrl{background:rgba(10,20,36,.85)}
+.atlas--live .atlas-vignette::after{display:none} /* full-screen noise overlay = extra full-screen blend each frame */
+.header .wrap{backdrop-filter:saturate(1.4) blur(10px);-webkit-backdrop-filter:saturate(1.4) blur(10px);background:rgba(255,255,255,.86)}
+/* promote fixed/animated layers to their own compositor layers */
+.atlas--live .atlas-canvas,.lab-canvas{transform:translateZ(0)}
+.atlas-pin,.atlas-stratum{will-change:transform}
+/* intro (hero copy) never gets a panel background */
+.atlas--live .atlas-intro{background:none!important;border:0!important;box-shadow:none!important}
+/* vignette follows the text panel instead of covering a fixed half of the screen */
+.atlas--live .atlas-vignette{background:linear-gradient(90deg,rgba(7,13,24,.9) 0,rgba(7,13,24,.72) calc(var(--tx,46vw) - 120px),rgba(7,13,24,0) calc(var(--tx,46vw) + 140px)),linear-gradient(0deg,rgba(7,13,24,.65),transparent 20%),linear-gradient(180deg,rgba(7,13,24,.5),transparent 16%)}
+@media (max-width:900px){.atlas--live .atlas-vignette{background:linear-gradient(0deg,rgba(7,13,24,.85) 0%,rgba(7,13,24,0) 48%),linear-gradient(180deg,rgba(7,13,24,.6),transparent 20%)}}
+/* wide screens: use more of the viewport so there is no empty gutter */
+@media (min-width:1600px){:root{--wrap:1480px}}
+@media (min-width:2200px){:root{--wrap:1680px}}
+/* tablet landscape / small laptop: give the model room and keep tools clear of the WhatsApp button */
+@media (min-width:901px) and (max-width:1280px){
+  .atlas--live .atlas-intro{width:min(520px,44vw)}
+  .atlas--live .atlas-intro .lead{font-size:.95rem}
+  .atlas--live .atlas-hint{display:none}
+  .atlas--live .atlas-tools{right:calc(var(--pad) + 76px)}
+}
+@media (min-width:1281px) and (max-width:1700px){.atlas--live .atlas-tools{right:max(calc(var(--pad) + 76px),calc((100vw - var(--wrap)) / 2 + var(--pad)))}}
+@media (min-width:901px) and (max-height:820px){.atlas--live .atlas-ch-wrap{padding:92px 0 96px}.atlas--live .atlas-ch .lead{font-size:.9rem}}
+@media (min-width:901px) and (max-width:1280px){.atlas--live .atlas-tools .lbl,.atlas--live .atlas-tools button span:not([class*=ic]){display:none}}

@@ -6,6 +6,7 @@
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js';
 
 const root = document.querySelector('[data-atlas]');
 if (root) boot(root);
@@ -34,7 +35,7 @@ function boot(section) {
 
   /* ---------------- renderer ---------------- */
   const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, coarse ? 1.75 : 2));
+  renderer.setPixelRatio(Math.min(devicePixelRatio || 1, coarse ? 1.5 : 1.6));
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 0.86;
@@ -50,7 +51,7 @@ function boot(section) {
   const camera = new THREE.PerspectiveCamera(24, 1, 1, 600);
   const key = new THREE.DirectionalLight(0xfff6ea, 2.4);
   key.position.set(-30, 52, 34); key.castShadow = true;
-  key.shadow.mapSize.set(coarse ? 1536 : 3072, coarse ? 1536 : 3072);
+  key.shadow.mapSize.set(coarse ? 1024 : 2048, coarse ? 1024 : 2048);
   Object.assign(key.shadow.camera, { left: -36, right: 36, top: 36, bottom: -36, near: 5, far: 160 });
   key.shadow.bias = -0.00025; key.shadow.normalBias = 0.025; key.shadow.radius = 3;
   scene.add(key);
@@ -298,6 +299,41 @@ function boot(section) {
   box(GX - 4.5, 0.01, 0.08, mLine, -GX / 2 + (GX - 4.5) / 2, ry + 0.005, 14.4, 'road', false);
   cyl(0.22, 0.22, 0.73, mat(C.asphalt2, 'road'), 21.6, 0.45, 13.6, 'road', 28, true);
 
+
+  /* ---------------- surveying & planning: total station, prism, control points, contours ---------------- */
+  const SVX = 10.5, SVZ = 11.6, mSv = metal(C.graphite, 'survey');
+  const tsApex = new THREE.Vector3(SVX, 1.45, SVZ);
+  [[-.55, -.35], [.55, -.35], [0, .6]].forEach(([a, b]) => {
+    const foot = new THREE.Vector3(SVX + a, 0.06, SVZ + b), len = foot.distanceTo(tsApex);
+    const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.045, len, 8), mat(0xd9cbb3, 'survey'));
+    leg.position.copy(foot).add(tsApex).multiplyScalar(0.5); leg.quaternion.setFromUnitVectors(UP, tsApex.clone().sub(foot).normalize()); leg.castShadow = true; leg.userData.zone = 'survey'; world.add(leg);
+  });
+  box(0.34, 0.08, 0.34, mSv, SVX, 1.5, SVZ, 'survey');
+  box(0.3, 0.42, 0.22, mat(0xf2b01e, 'survey', { roughness: .5 }), SVX, 1.75, SVZ, 'survey');
+  cyl(0.07, 0.07, 0.3, mSv, SVX, 1.82, SVZ + 0.05, 'survey', 16).rotation.x = Math.PI / 2;
+  // prism pole at a far corner + GNSS base station
+  const PRX = 19, PRZ = -12;
+  cyl(0.025, 0.025, 2.2, mat(0xf3f0ea, 'survey'), PRX, 1.16, PRZ, 'survey', 8);
+  cyl(0.11, 0.11, 0.08, mSv, PRX, 2.3, PRZ, 'survey', 20, true);
+  const gx = -21, gz = -12;
+  [[-.4, -.3], [.4, -.3], [0, .45]].forEach(([a, b]) => cyl(0.025, 0.025, 1.6, mat(0xd9cbb3, 'survey'), gx + a * .5, 0.8, gz + b * .5, 'survey', 6));
+  cyl(0.22, 0.22, 0.08, mat(0xf3f0ea, 'survey'), gx, 1.65, gz, 'survey', 24, true);
+  // laser line from the instrument to the prism (shown in the survey chapter)
+  const beamGeo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(SVX, 1.82, SVZ), new THREE.Vector3(PRX, 2.3, PRZ)]);
+  const beam = new THREE.Line(beamGeo, new THREE.LineBasicMaterial({ color: 0xf2b01e, transparent: true, opacity: 0 })); beam.userData.dyn = true; world.add(beam);
+  // surveyed grid points + contour lines on the plot surface
+  const ptGeo = new THREE.ConeGeometry(0.09, 0.3, 6);
+  const ptMesh = new THREE.InstancedMesh(ptGeo, mat(0xf2b01e, 'survey', { roughness: .5 }), 48); let pi = 0;
+  for (let i = 0; i < 8; i++) for (let j = 0; j < 6; j++) { P.set(-20 + i * 5.6, 0.2, -14 + j * 5.3); if (Math.abs(P.x - 2) < 8 && P.z > -10 && P.z < 4) { P.y = -5; } M4.compose(P, Q.identity(), S.set(1, 1, 1)); ptMesh.setMatrixAt(pi++, M4); }
+  ptMesh.count = pi; ptMesh.userData.zone = 'survey'; world.add(ptMesh);
+  const contourMat = new THREE.LineBasicMaterial({ color: 0xd99a0c, transparent: true, opacity: 0 });
+  const contours = [];
+  for (let k = 0; k < 5; k++) {
+    const pts = []; const r0 = 4 + k * 2.6;
+    for (let a = 0; a <= 64; a++) { const t2 = a / 64 * Math.PI * 2, r = r0 * (1 + 0.12 * Math.sin(t2 * 3 + k) + 0.06 * Math.cos(t2 * 5)); pts.push(new THREE.Vector3(-13 + Math.cos(t2) * r * 1.2, 0.1, -9 + Math.sin(t2) * r * .55)); }
+    const ln = new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts.filter(p => p.x > -23.5 && p.x < 23.5 && p.z > -15.8 && p.z < 13.5)), contourMat); ln.userData.dyn = true; world.add(ln); contours.push(ln);
+  }
+
   /* ---------------- scale figures (maquette style) ---------------- */
   const figM = new THREE.MeshStandardMaterial({ color: 0xf6f4f0, roughness: 0.9 });
   function figure(x, z, s = 1) {
@@ -306,23 +342,53 @@ function boot(section) {
     const h = new THREE.Mesh(new THREE.SphereGeometry(0.15, 16, 12), figM); h.position.y = 1.42; h.castShadow = true; g.add(h);
     world.add(g);
   }
-  figure(RX - 1.4, RZ + 1.5); figure(NDTX + 0.1, NDTZ + 1.1); figure(-2.4, 11.4); figure(-13.4, 12.6); figure(PX - 3.2, PZ + 2.1); figure(4.2, 6.2, 0.95);
+  figure(RX - 1.4, RZ + 1.5); figure(NDTX + 0.1, NDTZ + 1.1); figure(-2.4, 11.4); figure(-13.4, 12.6); figure(PX - 3.2, PZ + 2.1); figure(4.2, 6.2, 0.95); figure(SVX - .5, SVZ + .9);
 
-  /* ---------------- presets + pins ---------------- */
+  /* ---------------- performance: merge every static mesh/line per material (≈1200 → ≈70 draw calls) ---------------- */
+  spt.userData.dyn = true; drum.userData.dyn = true; rings.forEach(r => r.userData.dyn = true);
+  (function mergeStatic() {
+    world.updateMatrixWorld(true);
+    const meshes = new Map(), lines = new Map(), drop = [];
+    (function walk(o) {
+      for (const c of [...o.children]) {
+        if (c.userData.dyn || c.isInstancedMesh || c.isSprite) continue;
+        if (c.isMesh) {
+          const k = c.material.uuid + (c.castShadow ? 's' : '') + (c.receiveShadow ? 'r' : '');
+          const g = c.geometry.index ? c.geometry.toNonIndexed() : c.geometry.clone(); g.applyMatrix4(c.matrixWorld);
+          for (const a of Object.keys(g.attributes)) if (!['position', 'normal', 'uv'].includes(a)) g.deleteAttribute(a);
+          if (!g.attributes.uv) g.setAttribute('uv', new THREE.Float32BufferAttribute(new Float32Array(g.attributes.position.count * 2), 2));
+          if (!meshes.has(k)) meshes.set(k, { mat: c.material, cast: c.castShadow, recv: c.receiveShadow, zone: c.userData.zone, geos: [] });
+          meshes.get(k).geos.push(g); drop.push(c);
+        } else if (c.isLineSegments) {
+          const g = c.geometry.clone(); g.applyMatrix4(c.matrixWorld);
+          if (!lines.has(c.material.uuid)) lines.set(c.material.uuid, { mat: c.material, geos: [] });
+          lines.get(c.material.uuid).geos.push(g); drop.push(c);
+        }
+        walk(c);
+      }
+    })(world);
+    drop.forEach(o => o.parent && o.parent.remove(o));
+    meshes.forEach(v => { const m = new THREE.Mesh(mergeGeometries(v.geos), v.mat); m.castShadow = v.cast; m.receiveShadow = v.recv; m.userData.zone = v.zone; m.matrixAutoUpdate = false; world.add(m); });
+    lines.forEach(v => { const l = new THREE.LineSegments(mergeGeometries(v.geos), v.mat); l.raycast = () => {}; l.matrixAutoUpdate = false; world.add(l); });
+  })();
+  renderer.shadowMap.autoUpdate = false; renderer.shadowMap.needsUpdate = true; // the site is static: bake shadows once
+
+  /* ---------------- camera keyframes + pins ---------------- */
   const V = (x, y, z) => new THREE.Vector3(x, y, z);
   const PRESETS = {
-    overview:  { pos: V(70, 56, 84), target: V(1, -1, 3) },
+    overview:  { pos: V(78, 62, 94), target: V(1, -1, 3) },
+    survey:    { pos: V(54, 40, 62), target: V(3, -1, 1) },
     geo:       { pos: V(52, 12, 38), target: V(15.5, -1.5, 3) },
     aggregate: { pos: V(-44, 16, 40), target: V(-15, 0.6, 8.5) },
     concrete:  { pos: V(12, 12, 40), target: V(-2.2, 1.2, 9.6) },
     steel:     { pos: V(34, 26, 24), target: V(3.5, 7, -3) },
     brick:     { pos: V(-36, 12, 14), target: V(-6, 2.6, -3.5) },
     water:     { pos: V(-42, 16, 6), target: V(-14, 3.4, -7.5) },
-    ndt:       { pos: V(11.5, 3.8, 14), target: V(8.6, 1.7, 2.4) },
+    ndt:       { pos: V(16, 4.2, 15), target: V(8.6, 1.7, 2.4) },
     road:      { pos: V(46, 9, 40), target: V(18.5, 0.3, 15.5) },
   };
   const XRAY = { geo: 1, steel: 1 };
-  const PINS = { geo: V(RX, 7.7, RZ), aggregate: V(-17, 2.8, 5), concrete: V(-0.6, 1.8, 11.1), steel: V(-5, 10.4, -8), brick: V(XS[0], 4.9, -5.5), water: V(TX, 7.3, TZ), ndt: V(NDTX, 2.6, NDTZ + 0.4), road: V(20.5, 1.2, 16.6) };
+  const PINS = { survey: V(SVX, 2.6, SVZ), geo: V(RX, 7.7, RZ), aggregate: V(-17, 2.8, 5), concrete: V(-0.6, 1.8, 11.1), steel: V(-5, 10.4, -8), brick: V(XS[0], 4.9, -5.5), water: V(TX, 7.3, TZ), ndt: V(NDTX, 2.6, NDTZ + 0.4), road: V(20.5, 1.2, 16.6) };
 
   const pinLayer = section.querySelector('.atlas-pins');
   const zones = chapters.map(c => c.getAttribute('data-zone'));
@@ -338,130 +404,193 @@ function boot(section) {
   const mkLabel = (t, cls) => { const d = document.createElement('div'); d.className = 'atlas-stratum ' + (cls || ''); d.textContent = t; pinLayer.appendChild(d); return d; };
   const labels = strataLabels.map(l => ({ el: mkLabel(l.text), pos: l.pos, zone: 'geo' })).concat(roadLabels.map(l => ({ el: mkLabel(l.text, 'right'), pos: l.pos, zone: 'road' })));
 
+  // one continuous camera path through every chapter (centripetal Catmull-Rom), scrubbed by scroll
+  const keys = zones.map(z => PRESETS[z] || PRESETS.overview);
+  const posPath = new THREE.CatmullRomCurve3(keys.map(k => k.pos), false, 'centripetal', 0.5);
+  const tgtPath = new THREE.CatmullRomCurve3(keys.map(k => k.target), false, 'centripetal', 0.5);
+  const smooth = x => x * x * x * (x * (x * 6 - 15) + 10); // smootherstep
+  function pathAt(x, outP, outT) { // x in chapter units (0..N-1) with a dwell at each stop
+    const i = Math.min(N - 2, Math.floor(x)), f = x - i, k = smooth(clamp01((f - 0.2) / 0.6));
+    const u = (i + k) / (N - 1);
+    posPath.getPoint(u, outP); tgtPath.getPoint(u, outT); outP.y = Math.max(outP.y, 2.2);
+    return k > 0.5 ? i + 1 : i;
+  }
+  function clamp01(v) { return v < 0 ? 0 : v > 1 ? 1 : v; }
+
   /* ---------------- controls + state ---------------- */
   const controls = new OrbitControls(camera, renderer.domElement);
-  Object.assign(controls, { enableDamping: true, dampingFactor: 0.07, enablePan: false, enableZoom: false, minDistance: 8, maxDistance: 150, maxPolarAngle: Math.PI * 0.47, rotateSpeed: 0.55, zoomSpeed: 0.8 });
+  Object.assign(controls, { enableDamping: true, dampingFactor: 0.08, enablePan: false, enableZoom: false, minDistance: 8, maxDistance: 210, maxPolarAngle: Math.PI * 0.47, rotateSpeed: 0.55, zoomSpeed: 0.8 });
   controls.enabled = !coarse;
+  renderer.domElement.style.touchAction = 'pan-y'; // OrbitControls sets "none", which blocks page scrolling on phones
   let userOverride = false, dragging = false;
-  controls.addEventListener('start', () => { userOverride = true; dragging = true; section.classList.add('is-dragging'); });
+  controls.addEventListener('start', () => { userOverride = true; dragging = true; section.classList.add('is-dragging'); dirty = 2; });
   controls.addEventListener('end', () => { dragging = false; section.classList.remove('is-dragging'); });
+  controls.addEventListener('change', () => { dirty = 2; });
 
-  let active = -1, explore = false, xray = false, xrayAuto = false, xrayT = 0, solidT = 1;
-  const goalPos = PRESETS.overview.pos.clone(), goalTarget = PRESETS.overview.target.clone();
-  camera.position.copy(goalPos).multiplyScalar(reduce ? 1 : 1.25); controls.target.copy(goalTarget);
+  let active = -1, explore = false, xray = false, xrayAuto = false, xrayT = 0, solidT = 1, dirty = 3;
+  let pRaw = 0, pS = 0, manual = -1; // scroll progress (raw / smoothed), manual chapter in explore mode
+  const goalPos = new THREE.Vector3(), goalTarget = new THREE.Vector3();
+  pathAt(0, goalPos, goalTarget); camera.position.copy(goalPos).multiplyScalar(reduce ? 1 : 1.18); controls.target.copy(goalTarget);
   const rail = [...section.querySelectorAll('.atlas-rail button')];
   const counter = section.querySelector('[data-atlas-count]');
 
   function setActive(i) {
-    if (i === active) return; active = i;
+    if (i === active) return; active = i; dirty = 3;
     chapters.forEach((c, k) => { c.classList.toggle('is-active', k === i); if (c !== intro) c.setAttribute('aria-hidden', k === i ? 'false' : 'true'); });
     rail.forEach((b, k) => { b.classList.toggle('is-active', k === i); b.classList.toggle('is-done', k < i); });
     pins.forEach(p => p.el.classList.toggle('is-active', p.i === i));
     if (counter) counter.textContent = String(i).padStart(2, '0');
-    section.dataset.zone = zones[i];
-    const pr = PRESETS[zones[i]] || PRESETS.overview;
-    goalPos.copy(pr.pos); goalTarget.copy(pr.target); xrayAuto = !!XRAY[zones[i]]; userOverride = false;
-    if (reduce) { camera.position.copy(goalPos); controls.target.copy(goalTarget); }
+    section.dataset.zone = zones[i]; xrayAuto = !!XRAY[zones[i]];
+    if (zones[i] === 'survey' || zones[i] === 'overview') renderer.shadowMap.needsUpdate = true;
+    if (typeof measureText === 'function' && W > 1) measureText();
   }
-  function scrollChapter() {
+  function readScroll() {
     if (explore) return;
     const r = section.getBoundingClientRect(), off = introOffset(), total = r.height - off - innerHeight;
-    const p = Math.min(Math.max((-r.top - off) / Math.max(total, 1), 0), 0.9999);
-    setActive(Math.min(N - 1, Math.floor(p * N)));
+    const p = Math.min(Math.max((-r.top - off) / Math.max(total, 1), 0), 1);
+    if (Math.abs(p - pRaw) > 0.0004) { if (userOverride && Math.abs(p - pRaw) > 0.002) userOverride = false; pRaw = p; dirty = 2; kick(); }
   }
-  function chapterScrollY(i) { const off = introOffset(), top = section.getBoundingClientRect().top + scrollY + off, total = section.offsetHeight - off - innerHeight; return top + total * ((i + 0.35) / N); }
-  function goChapter(i, fromPin) { if (explore) { setActive(i); return; } scrollTo({ top: chapterScrollY(i), behavior: reduce ? 'auto' : 'smooth' }); if (fromPin) setActive(i); }
+  function chapterScrollY(i) { const off = introOffset(), top = section.getBoundingClientRect().top + scrollY + off, total = section.offsetHeight - off - innerHeight; return top + total * (i / (N - 1)); }
+  function goChapter(i) {
+    if (explore) { manual = i; userOverride = false; dirty = 3; kick(); return; }
+    const y = chapterScrollY(i);
+    if (window.__lenis) window.__lenis.scrollTo(y, { duration: 1.6 }); else scrollTo({ top: y, behavior: reduce ? 'auto' : 'smooth' });
+  }
   rail.forEach((b, k) => b.addEventListener('click', () => goChapter(k)));
 
   const q = s => section.querySelector(s);
   const btnX = q('[data-atlas-xray]'), btnE = q('[data-atlas-explore]'), btnR = q('[data-atlas-reset]'), btnClose = q('[data-atlas-close]');
-  btnX && btnX.addEventListener('click', () => { xray = !xray; btnX.setAttribute('aria-pressed', xray); });
-  function zoom(f) { const off = camera.position.clone().sub(controls.target); off.setLength(THREE.MathUtils.clamp(off.length() * f, controls.minDistance, controls.maxDistance)); goalPos.copy(controls.target).add(off); goalTarget.copy(controls.target); userOverride = false; }
-  section.querySelectorAll('[data-atlas-zoom]').forEach(b => b.addEventListener('click', () => zoom(b.getAttribute('data-atlas-zoom') === 'in' ? 0.72 : 1.38)));
-  btnR && btnR.addEventListener('click', () => { const pr = PRESETS[zones[active]] || PRESETS.overview; goalPos.copy(pr.pos); goalTarget.copy(pr.target); userOverride = false; });
+  btnX && btnX.addEventListener('click', () => { xray = !xray; btnX.setAttribute('aria-pressed', xray); dirty = 3; kick(); });
+  let zoomK = 1;
+  section.querySelectorAll('[data-atlas-zoom]').forEach(b => b.addEventListener('click', () => { zoomK = Math.min(1.8, Math.max(0.45, zoomK * (b.getAttribute('data-atlas-zoom') === 'in' ? 0.75 : 1.33))); userOverride = false; dirty = 3; kick(); }));
+  btnR && btnR.addEventListener('click', () => { zoomK = 1; userOverride = false; dirty = 3; kick(); });
   let savedScroll = 0;
   function setExplore(on) {
     explore = on; section.classList.toggle('is-explore', on); document.documentElement.classList.toggle('atlas-lock', on);
     controls.enabled = on || !coarse; controls.enableZoom = on; btnE && btnE.setAttribute('aria-pressed', on);
-    if (on) { savedScroll = scrollY; if (active === 0) setActive(1); btnClose && btnClose.focus({ preventScroll: true }); }
-    else { scrollTo(0, savedScroll); scrollChapter(); }
-    resize();
+    renderer.domElement.style.touchAction = on ? 'none' : 'pan-y';
+    if (window.__lenis) on ? window.__lenis.stop() : window.__lenis.start();
+    if (on) { savedScroll = scrollY; manual = Math.max(1, active); btnClose && btnClose.focus({ preventScroll: true }); }
+    else { manual = -1; scrollTo(0, savedScroll); readScroll(); }
+    resize(); dirty = 3; kick();
   }
   btnE && btnE.addEventListener('click', () => setExplore(!explore));
   btnClose && btnClose.addEventListener('click', () => setExplore(false));
-  document.addEventListener('keydown', e => { if (!explore) return; if (e.key === 'Escape') setExplore(false); if (e.key === 'ArrowRight') setActive(Math.min(N - 1, active + 1)); if (e.key === 'ArrowLeft') setActive(Math.max(1, active - 1)); });
-  section.querySelectorAll('[data-atlas-step]').forEach(b => b.addEventListener('click', () => { const n = Math.max(0, Math.min(N - 1, active + (+b.getAttribute('data-atlas-step')))); explore ? setActive(Math.max(1, n)) : goChapter(n); }));
+  document.addEventListener('keydown', e => { if (!explore) return; if (e.key === 'Escape') setExplore(false); if (e.key === 'ArrowRight') goChapter(Math.min(N - 1, active + 1)); if (e.key === 'ArrowLeft') goChapter(Math.max(1, active - 1)); });
+  section.querySelectorAll('[data-atlas-step]').forEach(b => b.addEventListener('click', () => goChapter(Math.max(explore ? 1 : 0, Math.min(N - 1, active + (+b.getAttribute('data-atlas-step')))))));
 
-  const ray = new THREE.Raycaster(), mouse = new THREE.Vector2(); let hoverZone = null, downAt = null;
+  const ray = new THREE.Raycaster(), mouse = new THREE.Vector2(); let hoverZone = null, downAt = null, hoverT = 0;
   function pick(e) {
     const r = renderer.domElement.getBoundingClientRect(); mouse.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
     ray.setFromCamera(mouse, camera);
-    const hit = ray.intersectObjects(world.children, true).find(h => h.object.userData.zone && h.object.userData.zone !== 'base');
+    const hit = ray.intersectObjects(world.children, false).find(h => h.object.userData.zone && h.object.userData.zone !== 'base');
     return hit ? hit.object.userData.zone : null;
   }
-  renderer.domElement.addEventListener('pointermove', e => { if (dragging || e.pointerType === 'touch') return; const z = pick(e); hoverZone = z && zones.indexOf(z) > 0 ? z : null; renderer.domElement.style.cursor = hoverZone ? 'pointer' : 'grab'; });
-  renderer.domElement.addEventListener('pointerleave', () => { hoverZone = null; });
+  renderer.domElement.addEventListener('pointermove', e => {
+    if (dragging || e.pointerType === 'touch') return; const now = performance.now(); if (now - hoverT < 90) return; hoverT = now;
+    const z = pick(e), nz = z && zones.indexOf(z) > 0 ? z : null; if (nz !== hoverZone) { hoverZone = nz; dirty = 2; kick(); }
+    renderer.domElement.style.cursor = hoverZone ? 'pointer' : 'grab';
+  });
+  renderer.domElement.addEventListener('pointerleave', () => { if (hoverZone) { hoverZone = null; dirty = 2; kick(); } });
   renderer.domElement.addEventListener('pointerdown', e => { downAt = [e.clientX, e.clientY]; });
-  renderer.domElement.addEventListener('pointerup', e => { if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 6) return; const z = pick(e), i = z ? zones.indexOf(z) : -1; if (i > 0) goChapter(i, true); });
+  renderer.domElement.addEventListener('pointerup', e => { if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 6) return; const z = pick(e), i = z ? zones.indexOf(z) : -1; if (i > 0) goChapter(i); });
 
   /* ---------------- layout ---------------- */
   let W = 1, H = 1, shiftX = 0, shiftY = 0;
-  function applyShift(snap, f = 1) { // keep the model clear of the copy: right on desktop, up on phones
+  // keep the model centred in the space to the right of the text panel, at any screen width
+  let textRight = 0;
+  function measureText() {
+    const el = active === 0 && !intro.classList.contains('atlas-intro-m') ? intro : chapters[Math.max(1, active)];
+    const wr = wrap.getBoundingClientRect(), w = el ? Math.min(el.getBoundingClientRect().width || 0, W * .6) : 0;
+    textRight = wr.left + w; section.style.setProperty('--tx', Math.round(textRight) + 'px');
+  }
+  function shiftGoal() {
     const desk = W > 900;
-    const gx = desk ? -(active === 0 ? 0.25 : 0.2) : 0, gy = desk ? -0.02 : (active === 0 && !explore ? 0.06 : 0.27);
+    if (!desk) return [0, explore ? 0.2 : (active === 0 ? 0.04 : 0.24)];
+    const centre = (textRight + 24 + W) / 2;
+    return [-(centre - W / 2) / W, -0.02];
+  }
+  function applyShift(snap, f = 1) {
+    const [gx, gy] = shiftGoal();
     if (snap) { shiftX = gx; shiftY = gy; } else { shiftX += (gx - shiftX) * f; shiftY += (gy - shiftY) * f; }
     camera.setViewOffset(W, H, W * shiftX, H * shiftY, W, H); camera.updateProjectionMatrix();
+    return Math.abs(gx - shiftX) + Math.abs(gy - shiftY) > 1e-4;
   }
   function resize() {
     placeIntro();
     W = Math.max(1, stage.clientWidth); H = Math.max(1, stage.clientHeight);
     renderer.setSize(W, H, false); camera.aspect = W / H;
-    const desk = W > 900;
-    camera.fov = desk ? 24 : 40;
-    applyShift(true);
+    camera.fov = W > 900 ? 24 : 40;
+    measureText(); applyShift(true); dirty = 3; kick();
   }
-  new ResizeObserver(resize).observe(stage); addEventListener('resize', resize); resize();
+  new ResizeObserver(resize).observe(stage); addEventListener('resize', resize);
 
-  /* ---------------- loop ---------------- */
+  /* ---------------- loop: renders only while something is changing ---------------- */
   let visible = false, raf = 0, last = performance.now(); const t0 = last;
-  const kick = () => { if (!raf && visible && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(loop); } };
-  new IntersectionObserver(es => { visible = es[0].isIntersecting; kick(); }, { rootMargin: '120px' }).observe(stage);
-  document.addEventListener('visibilitychange', kick);
-  addEventListener('scroll', scrollChapter, { passive: true }); scrollChapter(); if (active < 0) setActive(0);
-  const tmp = new THREE.Vector3(), allSolid = ['concrete', 'ndt'].flatMap(z => zoneMats[z] || []);
+  function kick() { if (!raf && visible && !document.hidden) { last = performance.now(); raf = requestAnimationFrame(loop); } }
+  new IntersectionObserver(es => { visible = es[0].isIntersecting; if (visible) { dirty = 3; kick(); } }, { rootMargin: '150px' }).observe(stage);
+  document.addEventListener('visibilitychange', () => { dirty = 3; kick(); });
+  addEventListener('scroll', readScroll, { passive: true });
+  resize(); readScroll(); pS = pRaw; setActive(pathAt(pS * (N - 1), goalPos, goalTarget));
+  const tmp = new THREE.Vector3(), tmp2 = new THREE.Vector3(), lastCam = new THREE.Vector3(), lastTgt = new THREE.Vector3();
+  const allSolid = ['concrete', 'ndt'].flatMap(z => zoneMats[z] || []);
   function loop(now) {
     raf = 0; if (!visible || document.hidden) return;
-    const dt = Math.min(0.1, (now - last) / 1000); last = now; const t = (now - t0) / 1000;
+    const dt = Math.min(0.05, (now - last) / 1000); last = now; const t = (now - t0) / 1000;
+    let moving = false;
+    // scroll → smoothed progress → camera on the path
+    pS += (pRaw - pS) * (reduce ? 1 : 1 - Math.exp(-dt * 6));
+    if (Math.abs(pRaw - pS) < 1e-5) pS = pRaw;
+    let ch;
+    if (manual >= 0) { ch = manual; goalPos.copy(keys[manual].pos); goalTarget.copy(keys[manual].target); }
+    else ch = pathAt(pS * (N - 1), goalPos, goalTarget);
+    setActive(ch);
+    const fitW = W > 900 ? Math.min(1.45, Math.max(1, 0.7 / Math.max(0.3, (W - textRight) / W))) : 1;
+    if (zoomK !== 1 || fitW !== 1) goalPos.sub(goalTarget).multiplyScalar(zoomK * fitW).add(goalTarget);
     if (!userOverride && !dragging) {
-      const k = reduce ? 1 : 1 - Math.exp(-dt * 2.6);
+      const k = reduce ? 1 : 1 - Math.exp(-dt * (manual >= 0 ? 2.6 : 7));
       camera.position.lerp(goalPos, k); controls.target.lerp(goalTarget, k);
-      if (active === 0 && !reduce) { tmp.copy(goalPos).sub(goalTarget).applyAxisAngle(UP, dt * 0.035); goalPos.copy(goalTarget).add(tmp); }
     }
-    const f = Math.min(1, dt * 4.5);
-    applyShift(reduce, Math.min(1, dt * 2.4));
     controls.update();
-    xrayT += ((xray || xrayAuto ? 1 : 0) - xrayT) * f;
+    if (applyShift(reduce, Math.min(1, dt * 3))) moving = true;
+    if (camera.position.distanceToSquared(lastCam) > 1e-6 || controls.target.distanceToSquared(lastTgt) > 1e-6) moving = true;
+    lastCam.copy(camera.position); lastTgt.copy(controls.target);
+    // materials: x-ray, steel reveal, highlight (eased, then settle)
+    const f = Math.min(1, dt * 5);
+    const xg = xray || xrayAuto ? 1 : 0, sg = zones[active] === 'steel' || xray ? 0.32 : 1;
+    if (Math.abs(xg - xrayT) > 0.002 || Math.abs(sg - solidT) > 0.002) moving = true;
+    xrayT += (xg - xrayT) * f; solidT += (sg - solidT) * f;
     xrayMats.forEach(m => { m.opacity = 1 - xrayT * 0.84; m.depthWrite = xrayT < 0.5; });
-    solidT += ((zones[active] === 'steel' || xray ? 0.32 : 1) - solidT) * f;
     allSolid.forEach(m => { m.transparent = solidT < 0.999; m.opacity = solidT; m.depthWrite = solidT > 0.6; });
-    const az = zones[active], pulse = 0.5 + 0.5 * Math.sin(t * 2.6);
-    for (const zn in zoneMats) { const amt = zn === az ? 0.1 + pulse * 0.1 : zn === hoverZone ? 0.08 : 0; zoneMats[zn].forEach(m => { m.emissive.copy(AMBER); m.emissiveIntensity += (amt - m.emissiveIntensity) * Math.min(1, dt * 6); }); }
-    for (const zn in zoneEdges) zoneEdges[zn].forEach(m => { const on = zn === az; m.color.set(on ? 0xd99a0c : C.ink); m.opacity += ((on ? 0.85 : 0.16) - m.opacity) * f; });
-    if (!reduce) {
-      spt.position.y = 3.2 + Math.abs(Math.sin(t * 2)) * 1.15;
-      drum.rotation.y += dt * 1.2;
-      rings.forEach((r, i) => { const ph = (t * 0.8 + i / 3) % 1; r.scale.setScalar(1 + ph * 3.4); r.material.opacity = (az === 'ndt' ? 0.9 : 0.3) * (1 - ph); });
+    const az = zones[active];
+    for (const zn in zoneMats) { const amt = zn === az ? 0.16 : zn === hoverZone ? 0.09 : 0; zoneMats[zn].forEach(m => { if (Math.abs(amt - m.emissiveIntensity) > 0.002) { moving = true; m.emissive.copy(AMBER); m.emissiveIntensity += (amt - m.emissiveIntensity) * Math.min(1, dt * 7); } }); }
+    for (const zn in zoneEdges) zoneEdges[zn].forEach(m => { const on = zn === az, go = on ? 0.85 : 0.16; if (Math.abs(go - m.opacity) > 0.002) { moving = true; m.color.set(on ? 0xd99a0c : C.ink); m.opacity += (go - m.opacity) * f; } });
+    const sv = az === 'survey' ? 1 : 0; if (Math.abs(sv - contourMat.opacity) > 0.01) moving = true;
+    contourMat.opacity += (sv * .9 - contourMat.opacity) * f; beam.material.opacity = contourMat.opacity;
+    // small life only where the camera is looking
+    const anim = !reduce && (az === 'geo' || az === 'concrete' || az === 'ndt' || az === 'survey');
+    if (anim) {
+      moving = true;
+      if (az === 'geo') spt.position.y = 3.2 + Math.abs(Math.sin(t * 2)) * 1.15;
+      if (az === 'concrete') drum.rotation.y += dt * 1.2;
+      if (az === 'survey') beam.material.opacity = 0.35 + 0.55 * (0.5 + 0.5 * Math.sin(t * 6));
+      rings.forEach((r, i) => { const ph = (t * 0.8 + i / 3) % 1; r.scale.setScalar(1 + ph * 3.4); r.material.opacity = az === 'ndt' ? 0.9 * (1 - ph) : 0; });
     }
-    renderer.render(scene, camera);
-    pins.forEach(p => project(p.el, p.pos));
-    labels.forEach(l => { project(l.el, l.pos); l.el.classList.toggle('is-on', az === l.zone); });
-    raf = requestAnimationFrame(loop);
+    if (moving || dirty > 0) {
+      renderer.render(scene, camera);
+      pins.forEach(p => project(p.el, p.pos));
+      labels.forEach(l => { project(l.el, l.pos); l.el.classList.toggle('is-on', az === l.zone); });
+      if (dirty > 0) dirty--;
+      raf = requestAnimationFrame(loop);
+    } // else: idle, nothing to draw until scroll/drag/resize kicks the loop again
   }
   function project(el, pos) {
-    tmp.copy(pos).project(camera);
-    const x = (tmp.x * 0.5 + 0.5) * W, y = (-tmp.y * 0.5 + 0.5) * H;
+    tmp2.copy(pos).project(camera);
+    const x = (tmp2.x * 0.5 + 0.5) * W, y = (-tmp2.y * 0.5 + 0.5) * H;
     el.style.transform = `translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0)`;
-    el.classList.toggle('is-hidden', tmp.z > 1 || x < -40 || x > W + 40 || y < 60 || y > H - 40);
+    const hide = tmp2.z > 1 || x < -40 || x > W + 40 || y < 70 || y > H - 50;
+    if (el._h !== hide) { el._h = hide; el.classList.toggle('is-hidden', hide); }
   }
+  window.__atlasDebug = { camera, controls, get active() { return active; }, renderer };
   kick();
 }

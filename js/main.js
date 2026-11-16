@@ -396,4 +396,18 @@
   function filtersAll() { $$('[data-projects]').forEach(function (b) { buildFilters(b, '.proj', '.tag'); }); $$('[data-equipment]').forEach(function (b) { buildFilters(b, '.eq', '.tag'); }); }
   filtersAll();
   if ('MutationObserver' in window) $$('[data-projects],[data-equipment]').forEach(function (b) { new MutationObserver(filtersAll).observe(b, { childList: true }); });
+
+  /* Process (home): light up each step as it reaches the middle of the screen; fill the meter */
+  var proc = $('[data-process]');
+  if (proc) {
+    var psteps = $$('.pr-step', proc), meter = $$('.pr-meter li', proc), pbox = $('.pr-steps', proc);
+    function procScroll() {
+      var mid = innerHeight * 0.55, on = -1;
+      psteps.forEach(function (st, i) { var b = st.getBoundingClientRect(); if (b.top < mid) on = i; st.classList.toggle('is-on', b.top < mid && b.bottom > innerHeight * 0.18 || reduce); });
+      meter.forEach(function (li, i) { li.classList.toggle('is-on', i <= on); });
+      var r = pbox.getBoundingClientRect(), p = Math.min(1, Math.max(0, (mid - r.top) / Math.max(1, r.height)));
+      proc.style.setProperty('--pp', p.toFixed(3));
+    }
+    addEventListener('scroll', procScroll, { passive: true }); addEventListener('resize', procScroll); procScroll();
+  }
 })();
