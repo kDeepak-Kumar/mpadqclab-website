@@ -107,7 +107,7 @@
 
   /* ---------- Editable data (JSON files in /data) ---------- */
   function clientHTML(c) {
-    return '<div class="client' + (c.featured ? ' featured' : '') + '">' + (c.logo ? '<img src="' + esc(root + c.logo) + '" alt="' + esc(c.name) + ' logo" loading="lazy" width="140" height="46">' : '<b>' + esc(c.name) + '</b>') + (c.sector ? '<small>' + esc(c.sector) + '</small>' : '') + '</div>';
+    return '<div class="client' + (c.featured ? ' featured' : '') + (c.logo ? ' has-logo' : '') + '">' + (c.logo ? '<span class="lg"><img src="' + esc(root + c.logo) + '" alt="' + esc(c.name) + ' logo" loading="lazy"></span>' : '<span class="lg lg-txt">' + esc(c.name.split(' ').map(function (w) { return w[0]; }).join('').slice(0, 3)) + '</span>') + '<b>' + esc(c.name) + '</b>' + (c.sector ? '<small>' + esc(c.sector) + '</small>' : '') + '</div>';
   }
   function projHTML(p) {
     var meta = [['Client', p.client], ['Location', p.location], ['Year', p.year]].filter(function (x) { return x[1]; });
@@ -332,35 +332,93 @@
     }, { passive: true });
   }
 
-  /* Journey (home): pin the section and move the card track sideways as you scroll */
+  /* Journey (home): self-playing 3D carousel — independent of page scrolling */
   var jr = $('[data-journey]');
   if (jr) {
-    var track = $('.jr-track', jr), rail = $$('.jr-rail li', jr), cards = $$('.jr-card', jr), stick = $('.jr-stick', jr);
+    var vp = $('.jr-viewport', jr), cards = $$('.jr-card', jr), rail = $$('.jr-rail li', jr);
     var stagesOrder = rail.map(function (li) { return li.getAttribute('data-stage'); });
-    var jrOn = false, jrMax = 0;
-    function jrLayout() {
-      var want = !reduce && innerWidth > 900;
-      jr.classList.toggle('jr--pin', want); jrOn = want;
-      if (want) { jrMax = Math.max(0, track.scrollWidth - innerWidth); jr.style.height = (innerHeight + jrMax * 1.1) + 'px'; }
-      else { jr.style.height = ''; track.style.removeProperty('--jx'); }
-      jrScroll();
-    }
-    function jrScroll() {
-      var p = 0;
-      if (jrOn) { var r = jr.getBoundingClientRect(), tot = jr.offsetHeight - innerHeight; p = Math.min(Math.max(-r.top / Math.max(tot, 1), 0), 1); track.style.setProperty('--jx', (p * jrMax).toFixed(1)); }
-      else { var vp = $('.jr-viewport', jr); p = vp.scrollWidth > vp.clientWidth ? vp.scrollLeft / (vp.scrollWidth - vp.clientWidth) : 0; }
-      jr.style.setProperty('--jp', p.toFixed(3));
-      var mid = innerWidth * (jrOn ? 0.42 : 0.5), cur = null;
-      cards.forEach(function (c) { var b = c.getBoundingClientRect(); if (b.left <= mid && b.right >= mid - 40) cur = c.getAttribute('data-stage'); });
-      if (cur == null && p > .95) cur = stagesOrder[stagesOrder.length - 1];
-      var idx = stagesOrder.indexOf(cur);
+    var n = cards.length, cur = 0, timer = 0, hover = false, inView = false, DWELL = 2600;
+    jr.classList.add('jr--flow');
+    var ctrl = document.createElement('div'); ctrl.className = 'jr-ctrl';
+    ctrl.innerHTML = '<button type="button" data-jr="-1" aria-label="Previous service"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></button><div class="jr-dots" aria-hidden="true"></div><button type="button" data-jr="1" aria-label="Next service"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg></button><button type="button" class="jr-pp" aria-label="Pause"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="7" y="5" width="3.5" height="14" rx="1"/><rect x="13.5" y="5" width="3.5" height="14" rx="1"/></svg></button>';
+    vp.parentNode.insertBefore(ctrl, vp.nextSibling);
+    var dots = $('.jr-dots', ctrl); cards.forEach(function () { var d = document.createElement('i'); dots.appendChild(d); });
+    var dotEls = $$('i', dots), pp = $('.jr-pp', ctrl), paused = reduce;
+    function layout() {
+      var w = cards[0].offsetWidth, gap = Math.max(14, w * 0.06);
+      cards.forEach(function (c, i) {
+        var d = ((i - cur) % n + n) % n; if (d > n / 2) d -= n;
+        var a = Math.abs(d), sgn = d < 0 ? -1 : 1, sc = 1 - Math.min(a, 3) * 0.07;
+        var x = 0; for (var k = 1; k <= Math.min(a, 3); k++) x += (w * (1 - (k - 1) * 0.07) + w * (1 - k * 0.07)) / 2 + gap - k * 10;
+        x *= sgn;
+        c.style.transform = 'translate3d(' + x.toFixed(1) + 'px,0,' + (-a * 70) + 'px) rotateY(' + (-sgn * Math.min(a, 2) * 9) + 'deg) scale(' + sc.toFixed(3) + ')';
+        c.style.opacity = a > 2 ? 0 : a === 2 ? 0.55 : 1;
+        c.style.zIndex = 50 - a; c.classList.toggle('is-center', a === 0);
+        c.setAttribute('aria-hidden', a === 0 ? 'false' : 'true');
+        c.style.pointerEvents = a > 1 ? 'none' : '';
+      });
+      dotEls.forEach(function (d, i) { d.classList.toggle('on', i === cur); });
+      var st = cards[cur].getAttribute('data-stage'), idx = stagesOrder.indexOf(st);
       rail.forEach(function (li, i) { li.classList.toggle('is-on', idx >= 0 && i <= idx); });
+      jr.style.setProperty('--jp', (cur / Math.max(1, n - 1)).toFixed(3));
     }
-    addEventListener('resize', jrLayout); addEventListener('scroll', jrScroll, { passive: true });
-    var vpEl = $('.jr-viewport', jr); vpEl && vpEl.addEventListener('scroll', jrScroll, { passive: true });
-    jrLayout(); addEventListener('load', jrLayout);
+    function go(k) { cur = ((k % n) + n) % n; layout(); schedule(); }
+    function schedule() { clearTimeout(timer); if (!paused && !hover && inView && !document.hidden) timer = setTimeout(function () { go(cur + 1); }, DWELL); }
+    $$('[data-jr]', ctrl).forEach(function (b) { b.addEventListener('click', function () { go(cur + (+b.getAttribute('data-jr'))); }); });
+    pp.addEventListener('click', function () { paused = !paused; pp.classList.toggle('is-paused', paused); pp.setAttribute('aria-label', paused ? 'Play' : 'Pause'); schedule(); });
+    if (paused) { pp.classList.add('is-paused'); pp.setAttribute('aria-label', 'Play'); }
+    cards.forEach(function (c, i) { c.addEventListener('click', function (e) { if (i !== cur) { e.preventDefault(); go(i); } }, true); });
+    vp.addEventListener('mouseenter', function () { hover = true; clearTimeout(timer); });
+    vp.addEventListener('mouseleave', function () { hover = false; schedule(); });
+    vp.addEventListener('focusin', function () { hover = true; clearTimeout(timer); });
+    vp.addEventListener('focusout', function () { hover = false; schedule(); });
+    var sx = null; vp.addEventListener('pointerdown', function (e) { sx = e.clientX; }, { passive: true });
+    vp.addEventListener('pointerup', function (e) { if (sx == null) return; var dx = e.clientX - sx; sx = null; if (Math.abs(dx) > 40) go(cur + (dx < 0 ? 1 : -1)); }, { passive: true });
+    vp.addEventListener('keydown', function (e) { if (e.key === 'ArrowRight') go(cur + 1); if (e.key === 'ArrowLeft') go(cur - 1); });
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { inView = es[0].isIntersecting; schedule(); }, { threshold: 0.35 }).observe(vp); else inView = true;
+    document.addEventListener('visibilitychange', schedule);
+    addEventListener('resize', layout); layout(); schedule();
   }
 
+
+  /* NABL page: certificate lightbox + searchable scope of accreditation */
+  $$('[data-cert-open]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var lb = document.createElement('div'); lb.className = 'cert-lb'; lb.setAttribute('role', 'dialog'); lb.setAttribute('aria-label', 'NABL certificate');
+      lb.innerHTML = '<button type="button" class="cert-x" aria-label="Close">×</button><img src="' + root + 'img/nabl-certificate.webp" alt="NABL certificate of accreditation, MPAD QC Lab Private Limited">';
+      document.body.appendChild(lb); document.documentElement.classList.add('atlas-lock');
+      requestAnimationFrame(function () { lb.classList.add('in'); });
+      function close() { lb.classList.remove('in'); document.documentElement.classList.remove('atlas-lock'); setTimeout(function () { lb.remove(); }, 300); document.removeEventListener('keydown', key); }
+      function key(e) { if (e.key === 'Escape') close(); }
+      lb.addEventListener('click', function (e) { if (e.target === lb || e.target.classList.contains('cert-x')) close(); });
+      document.addEventListener('keydown', key); $('.cert-x', lb).focus();
+    });
+  });
+  var scopeBox = $('[data-scope-list]');
+  if (scopeBox) {
+    getJSON('data/nabl-scope.json').then(function (d) {
+      var items = d.items || [], q = '', w = '', grp = '';
+      var groups = []; items.forEach(function (it) { if (groups.indexOf(it.group) < 0) groups.push(it.group); });
+      var mats = {}; items.forEach(function (it) { mats[it.material] = 1; });
+      $('[data-scope-stats]').innerHTML = [[items.length, 'accredited test parameters'], [items.filter(function (i) { return i.where === 'Lab'; }).length, 'in our permanent lab'], [items.filter(function (i) { return i.where === 'Site'; }).length, 'on site'], [Object.keys(mats).length, 'materials & products']].map(function (x) { return '<div><b>' + x[0] + '</b><span>' + x[1] + '</span></div>'; }).join('');
+      var chips = $('[data-scope-chips]');
+      chips.innerHTML = '<button type="button" aria-pressed="true" data-g="">All materials</button>' + groups.map(function (g) { return '<button type="button" aria-pressed="false" data-g="' + esc(g) + '">' + esc(g) + ' <i>' + items.filter(function (i) { return i.group === g; }).length + '</i></button>'; }).join('');
+      function render() {
+        var ql = q.toLowerCase(), list = items.filter(function (it) { return (!w || it.where === w) && (!grp || it.group === grp) && (!ql || ((it.test + ' ' + it.material + ' ' + it.method + ' ' + it.group).toLowerCase().indexOf(ql) >= 0 || (ql === 'cbr' && /california/i.test(it.test)) || (ql === 'upv' && /ultrasonic/i.test(it.test)))); });
+        if (!list.length) { scopeBox.innerHTML = '<p class="scope-empty">No accredited test matches that search. <a href="' + root + 'contact/">Ask us</a>: we may still test it, outside the NABL scope.</p>'; return; }
+        var by = {}; list.forEach(function (it) { (by[it.material] = by[it.material] || []).push(it); });
+        scopeBox.innerHTML = Object.keys(by).map(function (m) {
+          var rows = by[m];
+          return '<details class="scope-g" ' + (ql || grp || Object.keys(by).length < 4 ? 'open' : '') + '><summary><span><b>' + esc(m) + '</b><small>' + esc(rows[0].group) + '</small></span><em>' + rows.length + (rows.length > 1 ? ' tests' : ' test') + '</em></summary><table class="test-table"><thead><tr><th>Test / parameter</th><th>Method</th><th>Field / Lab</th></tr></thead><tbody>' +
+            rows.map(function (r) { return '<tr><td>' + esc(r.test) + '</td><td>' + esc(r.method) + '</td><td><span class="tag' + (r.where === 'Site' ? ' amber' : '') + '">' + (r.where === 'Site' ? 'Field' : 'Lab') + '</span></td></tr>'; }).join('') + '</tbody></table></details>';
+        }).join('');
+      }
+      $('[data-scope-q]').addEventListener('input', function (e) { q = e.target.value.trim(); render(); });
+      $$('[data-scope-w]').forEach(function (b) { b.addEventListener('click', function () { w = b.getAttribute('data-scope-w'); $$('[data-scope-w]').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); render(); }); });
+      $$('button', chips).forEach(function (b) { b.addEventListener('click', function () { grp = b.getAttribute('data-g'); $$('button', chips).forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); render(); }); });
+      render();
+    }).catch(function () { scopeBox.innerHTML = '<p class="fine">The scope could not be loaded. <a href="' + root + 'docs/nabl-scope.pdf">Open the scope PDF</a>.</p>'; });
+  }
   /* Services: "Which test do I need?" stage guide (highlights matching services) */
   var guide = $('[data-guide]'), ggrid = $('[data-guide-grid]');
   if (guide && ggrid) {

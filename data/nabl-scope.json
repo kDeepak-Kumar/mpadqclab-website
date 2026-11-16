@@ -1,0 +1,1025 @@
+{
+ "_help": "NABL scope of accreditation (annexure to certificate NABLT0726TS18813). Edit only when the scope is amended.",
+ "certificate": "NABLT0726TS18813",
+ "valid": "01/07/2026 – 30/06/2030",
+ "amended": "27/07/2026",
+ "items": [
+  {
+   "n": 1,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "AAC blocks",
+   "test": "Bulk Density",
+   "method": "IS 6441 (Part-1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 2,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "AAC blocks",
+   "test": "Compressive Strength",
+   "method": "IS 6441 (Part-5)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 3,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "AAC blocks",
+   "test": "Dimensions - height",
+   "method": "IS 2185 (Part -3)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 4,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "AAC blocks",
+   "test": "Dimensions - length",
+   "method": "IS 2185 (Part-3)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 5,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "AAC blocks",
+   "test": "Dimensions - width",
+   "method": "IS 2185 (Part-3)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 6,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "AAC blocks",
+   "test": "Moisture content",
+   "method": "IS 6441( Part 1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 7,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Aggregates",
+   "test": "Aggregate Impact value",
+   "method": "IS 2386 Part-1",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 8,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Aggregates",
+   "test": "Elongation Index",
+   "method": "IS 2386 (Part-1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 9,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Aggregates",
+   "test": "Elongation Index",
+   "method": "IS 2386 Part-1",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 10,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Aggregates",
+   "test": "Flakiness Index",
+   "method": "IS 2386 (Part-1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 11,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Aggregates",
+   "test": "Flakiness Index",
+   "method": "IS 2386 Part-1",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 12,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Aggregates",
+   "test": "Los Angeles Abrasion Test",
+   "method": "IS 2386 (Part-4)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 13,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Aggregates",
+   "test": "Los Angeles Abrasion Test",
+   "method": "IS 2720 Part-4",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 14,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Aggregates",
+   "test": "Sieve analysis (53, 45, 22.4, 11.2,4.75, 2.36mm 600 micron & 300 micron)",
+   "method": "IS 2386 (Part 1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 15,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Aggregates",
+   "test": "Sieve analysis (75, 53, 26.5, 9.5, 4.75, 2.36, 0.85, 0.425 & 0.075 mm)",
+   "method": "IS 2386 (Part 1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 16,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Aggregates",
+   "test": "Specific Gravity",
+   "method": "IS 2386 Part-3",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 17,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Aggregates",
+   "test": "Specific gravity",
+   "method": "IS 2386 Part-3",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 18,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Aggregates",
+   "test": "Water absorption",
+   "method": "IS 2386 (Part-3)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 19,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Aggregates",
+   "test": "Water Absorption",
+   "method": "IS 2386 Part-3",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 20,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "Burnt clay bricks",
+   "test": "Compressive Strength",
+   "method": "IS 3495 (Part-1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 21,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "Burnt clay bricks",
+   "test": "Dimension Height",
+   "method": "IS 1077",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 22,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "Burnt clay bricks",
+   "test": "Dimension Length",
+   "method": "IS 1077",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 23,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "Burnt clay bricks",
+   "test": "Dimension Width",
+   "method": "IS 1077",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 24,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "Burnt clay bricks",
+   "test": "Water Absorption",
+   "method": "IS 3495 (Part-2)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 25,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "Cement (OPC / PPC)",
+   "test": "Compressive strength",
+   "method": "IS 4031 (Part 6 )",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 26,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "Cement (OPC / PPC)",
+   "test": "Consistency of standard cement paste",
+   "method": "IS 4031 (Part 4)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 27,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "Cement (OPC / PPC)",
+   "test": "Final setting time",
+   "method": "IS 4031(Part 5)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 28,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "Cement (OPC / PPC)",
+   "test": "Fineness by specific surface by Blaine air permeability method",
+   "method": "IS 4031(Part 2)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 29,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "Cement (OPC / PPC)",
+   "test": "Initial setting time",
+   "method": "IS 4031(Part 5)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 30,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "Cement (OPC / PPC)",
+   "test": "Soundness Test by Autoclave Method",
+   "method": "IS 4031 (Part 3)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 31,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "10% Fines Value",
+   "method": "IS 2386 (part 4)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 32,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "Bulk density (Loose)",
+   "method": "IS 2386 Part-3",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 33,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "Deleterious Substances Material",
+   "method": "IS 2386 (Part 2)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 34,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "Los Angeles Abrasion Test",
+   "method": "IS 2386 (Part 4)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 35,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "Soundness by Magnesium Sulphate",
+   "method": "IS 2386 (part 5)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 36,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "Soundness by Sodium Sulphate",
+   "method": "IS 2386 (Part 5)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 37,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "Bulk Density (Rodded)",
+   "method": "IS  2386 (Part-3)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 38,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "Crushing value",
+   "method": "IS  2386 (Part-4)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 39,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "Elongation Index",
+   "method": "IS  2386 (Part-1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 40,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "Flakiness Index",
+   "method": "IS  2386 (Part-1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 41,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "Impact value",
+   "method": "IS 2386 (Part-4)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 42,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "Sieve Analysis(63mm,40mm,20 mm,10mm,12.5mm,4.75 mm)",
+   "method": "IS 2386 (Part-1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 43,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "Specific Gravity",
+   "method": "IS 2386 (Part-3)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 44,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Coarse aggregate",
+   "test": "Water Absorption",
+   "method": "IS 2386 (Part-3)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 45,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "Paver blocks",
+   "test": "Water Absorption",
+   "method": "IS 15658 (Annex C)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 46,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "Paver blocks",
+   "test": "Compressive Strength",
+   "method": "IS 15658",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 47,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Fine aggregate",
+   "test": "Bulkage",
+   "method": "IS 2386 (Part 3)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 48,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Fine aggregate",
+   "test": "Deleterious Substances Material",
+   "method": "IS 2386(Part 2)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 49,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Fine aggregate",
+   "test": "Soundness by Magnesium Sulphate",
+   "method": "IS 2386 (part 5)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 50,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Fine aggregate",
+   "test": "Soundness by Sodium Sulphate",
+   "method": "IS 2386 (Part 5)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 51,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Fine aggregate",
+   "test": "Bulk Density Loose",
+   "method": "IS  2386 (Part-3)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 52,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Fine aggregate",
+   "test": "Bulk Density Rodded",
+   "method": "IS  2386 (Part-3)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 53,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Fine aggregate",
+   "test": "Material Finer than 75micron",
+   "method": "IS  2386 (Part-1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 54,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Fine aggregate",
+   "test": "Sieve Analysis(0.075 mm,0.150mm,0.300mm,0 .600mm,1.18mm,2.36mm ,4.75mm,10 mm )",
+   "method": "IS 2386 (Part-1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 55,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Fine aggregate",
+   "test": "Specific Gravity",
+   "method": "IS 2386 (Part-3)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 56,
+   "where": "Lab",
+   "group": "Aggregates",
+   "material": "Fine aggregate",
+   "test": "Water Absorption",
+   "method": "IS 2386 (Part 3)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 57,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "Fly ash",
+   "test": "Specific gravity",
+   "method": "IS 1727",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 58,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "GGBS",
+   "test": "Density",
+   "method": "IS 4031 (Part 11)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 59,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "GGBS",
+   "test": "Fineness by specific surface by Blaine air permeability method",
+   "method": "IS 4031(Part 2)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 60,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "GGBS",
+   "test": "Slag activity Index, 28 days",
+   "method": "IS 4031 (Part 6)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 61,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "GGBS",
+   "test": "Slag activity Index, 7 days",
+   "method": "IS 4031 (Part 6)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 62,
+   "where": "Lab",
+   "group": "Concrete",
+   "material": "Concrete cores",
+   "test": "Compressive Strength",
+   "method": "IS 516 (Part-4)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 63,
+   "where": "Lab",
+   "group": "Concrete",
+   "material": "Concrete cubes",
+   "test": "Compressive Strength",
+   "method": "IS 516 (Part 1 Sec 1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 64,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "Fly ash",
+   "test": "Compressive Strength of Pozzolana-Cement Mortar",
+   "method": "IS 1727",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 65,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "Fly ash",
+   "test": "Fineness by Sieving",
+   "method": "IS 1727",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 66,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "Fly ash",
+   "test": "Fineness by Blain’s air permeability",
+   "method": "IS 1727",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 67,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "Fly ash",
+   "test": "Lime Reactivity",
+   "method": "IS 1727",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 68,
+   "where": "Lab",
+   "group": "Cement & binders",
+   "material": "Fly ash",
+   "test": "Soundness (by autoclave)",
+   "method": "IS 1727",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 69,
+   "where": "Lab",
+   "group": "Steel",
+   "material": "TMT reinforcement steel",
+   "test": "Elongation after fracture",
+   "method": "IS 1608 Part-1",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 70,
+   "where": "Lab",
+   "group": "Steel",
+   "material": "TMT reinforcement steel",
+   "test": "Nominal Mass",
+   "method": "IS 1786",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 71,
+   "where": "Lab",
+   "group": "Steel",
+   "material": "TMT reinforcement steel",
+   "test": "Bend Test (Mandrel dia in mm: 24,30,32,36,40,48,50,60, 64,80,100)",
+   "method": "IS 1599",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 72,
+   "where": "Lab",
+   "group": "Steel",
+   "material": "TMT reinforcement steel",
+   "test": "Rebend Test (Mandrel dia in mm: 32,40,48,50,56,60,70,72, 94,96,112,120,128,140,1 50,160,175,192,224,200, 256)",
+   "method": "IS 1786",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 73,
+   "where": "Lab",
+   "group": "Steel",
+   "material": "TMT reinforcement steel",
+   "test": "Tensile strength",
+   "method": "IS 1608 Part-1",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 74,
+   "where": "Lab",
+   "group": "Steel",
+   "material": "TMT reinforcement steel",
+   "test": "Yield stress",
+   "method": "IS 1608 Part-1",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 75,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "California bearing ratio(CBR)",
+   "method": "IS 2720 Part-16",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 76,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "California bearing ratio(CBR)",
+   "method": "IS 2720 Part-16",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 77,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Heavy compaction (mdd)",
+   "method": "IS 2720 Part-8",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 78,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Heavy compaction (MDD)",
+   "method": "IS 2720 Part-8",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 79,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Heavy compaction (omc)",
+   "method": "IS 2720 Part-8",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 80,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Heavy compaction (OMC)",
+   "method": "IS 2720 Part-8",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 81,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Liquid Limit",
+   "method": "IS 2720 Part-5",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 82,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Liquid limit",
+   "method": "IS 2720 Part-5",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 83,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Plastic limit",
+   "method": "IS 2720 Part 5",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 84,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Plastic limit",
+   "method": "IS 2720 Part-5",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 85,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "Solid concrete blocks",
+   "test": "Dimensions - Length",
+   "method": "IS 2185 (Part 1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 86,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "Solid concrete blocks",
+   "test": "Block Density",
+   "method": "IS 2185 (Part 1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 87,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "Solid concrete blocks",
+   "test": "Compressive Strength",
+   "method": "IS 2185 (Part 1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 88,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "Solid concrete blocks",
+   "test": "Dimensions - Height",
+   "method": "IS 2185 (Part 1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 89,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "Solid concrete blocks",
+   "test": "Dimensions - Width",
+   "method": "IS 2185 (Part 1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 90,
+   "where": "Lab",
+   "group": "Bricks & blocks",
+   "material": "Solid concrete blocks",
+   "test": "Water Absorption",
+   "method": "IS 2185 (Part 1)",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 91,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Rock",
+   "test": "Compressive Strength",
+   "method": "IS 9143",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 92,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Rock",
+   "test": "Point Load Index Test",
+   "method": "IS 8764",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 93,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Rock",
+   "test": "Water Content",
+   "method": "IS 13030",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 94,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "California Bearing Ratio",
+   "method": "IS 2720 (Part 16)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 95,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Direct Shear test Angle of Internal Friction (f)",
+   "method": "IS 2720 (Part 13)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 96,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Direct Shear test Cohesion (c)",
+   "method": "IS 2720 (Part 13)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 97,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Free Swell Index",
+   "method": "IS 2720 (Part 40)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 98,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Grain size analysis-Wet 4.75mm 2.00 mm, 425 micron, 75 micron",
+   "method": "IS 2720 (Part 4)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 99,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Liquid Limit",
+   "method": "IS 2720 (Part 5)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 100,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Plastic Limit",
+   "method": "IS 2720 (Part 5)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 101,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Specific Gravity – Fine Grained Soil",
+   "method": "IS 2720 (Part 3)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 102,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Water content",
+   "method": "IS 2720 (Part 2)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 103,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Water content - Dry density relation using heavy compaction, maximum dry density",
+   "method": "IS 2720 (Part 8)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 104,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Water content- Dry density relation using heavy compaction, optimum moisture content",
+   "method": "IS 2720 (Part 8)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 105,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Water content- Dry density relation using light compaction, maximum dry density",
+   "method": "IS 2720 (Part 7)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 106,
+   "where": "Lab",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Water content- Dry density relation using light compaction, optimum moisture content",
+   "method": "IS 2720 (Part 7)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 1,
+   "where": "Site",
+   "group": "Steel",
+   "material": "Anchor bars",
+   "test": "Pullout test on anchor bars",
+   "method": "IS 11309",
+   "discipline": "Mechanical– Buildings Materials"
+  },
+  {
+   "n": 2,
+   "where": "Site",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Dry Density of soil in place by core- cutter Method",
+   "method": "IS 2720 (Part 29)",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 3,
+   "where": "Site",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "California Bearing ratio test",
+   "method": "IS 2720 Part-31",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 4,
+   "where": "Site",
+   "group": "Soil & rock",
+   "material": "Soil",
+   "test": "Ultimate Bearing Capacity/Safe Bearing Pressure/Settlement",
+   "method": "IS 1888",
+   "discipline": "Mechanical– Soil And Rocks"
+  },
+  {
+   "n": 5,
+   "where": "Site",
+   "group": "NDT",
+   "material": "RCC structures",
+   "test": "Carbonation Test",
+   "method": "IS516 (Part 5) (Section 3)",
+   "discipline": "Non-Destructive– Building Materials – Reinforced Concrete Structures"
+  },
+  {
+   "n": 6,
+   "where": "Site",
+   "group": "NDT",
+   "material": "RCC structures",
+   "test": "Rebound Hammer Test",
+   "method": "IS 516 (Part 5)(Sec 4)",
+   "discipline": "Non-Destructive– Building Materials – Reinforced Concrete Structures"
+  },
+  {
+   "n": 7,
+   "where": "Site",
+   "group": "NDT",
+   "material": "RCC structures",
+   "test": "Ultrasonic Pulse Velocity test",
+   "method": "IS 516 (Part 5)(Sec 1)",
+   "discipline": "Non-Destructive– Building Materials – Reinforced Concrete Structures"
+  }
+ ]
+}

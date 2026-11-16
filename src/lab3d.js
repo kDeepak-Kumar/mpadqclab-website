@@ -7,6 +7,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js';
+import { createPeople } from './people.js';
 
 const C = { clay: 0xefece6, clay2: 0xe0dcd4, clay3: 0xcfcac1, concrete: 0xd9d5cd, graphite: 0x2a3140, graphite2: 0x3b4352, chrome: 0xc9d0d8, ink: 0x0a1424, amber: 0xf2b01e, asphalt: 0x2f3238, rebar: 0x55504c, brick: 0xc98f6d };
 const UP = new THREE.Vector3(0, 1, 0);
@@ -565,6 +566,120 @@ const DEMOS = {
   topo() { return surveyScene('topo'); },
   setout() { return surveyScene('setout'); },
 
+
+  /* ---------------- STRUCTURAL DESIGN ---------------- */
+  frame() {
+    const g = new THREE.Group(); floor(g, 8, 6);
+    const XSf = [-1.3, 0, 1.3], ZSf = [-.75, .75], H = .95, NS = 3, mem = [];
+    const conc = () => new THREE.MeshStandardMaterial({ color: 0xc9c6c0, roughness: .8, transparent: true, opacity: .25 });
+    XSf.forEach(x => ZSf.forEach(z => { for (let f = 0; f < NS; f++) { const m = B(.16, H, .16, conc(), x, f * H + H / 2, z, true, g); m.userData = { f, kind: 'col', base: m.position.clone(), force: 1 - f * .3 - (x === 0 ? 0 : .12) }; mem.push(m); } }));
+    for (let f = 1; f <= NS; f++) {
+      ZSf.forEach(z => [[-1.3, 0], [0, 1.3]].forEach(([a, b]) => { const m = B(b - a, .14, .12, conc(), (a + b) / 2, f * H - .07, z, true, g); m.userData = { f, kind: 'beam', base: m.position.clone(), force: .78 - f * .14 }; mem.push(m); }));
+      XSf.forEach(x => { const m = B(.12, .14, 1.5, conc(), x, f * H - .07, 0, true, g); m.userData = { f, kind: 'beam', base: m.position.clone(), force: .7 - f * .14 }; mem.push(m); });
+      const sl = B(2.8, .05, 1.7, new THREE.MeshStandardMaterial({ color: 0xdedbd5, roughness: .9, transparent: true, opacity: .0 }), 0, f * H + .005, 0, false, g); sl.userData = { slab: true, f };
+    }
+    // footings
+    XSf.forEach(x => ZSf.forEach(z => B(.42, .14, .42, M(0xb9b5ad), x, -.02, z, true, g)));
+    const arrows = new THREE.Group(); g.add(arrows); const red = new THREE.MeshBasicMaterial({ color: 0xc8392b, transparent: true, opacity: 0 }), org = new THREE.MeshBasicMaterial({ color: 0xe8742a, transparent: true, opacity: 0 });
+    for (let f = 1; f <= NS; f++) for (let x = -1.2; x <= 1.21; x += .6) for (let z = -.6; z <= .61; z += .6) { const c = new THREE.Mesh(new THREE.ConeGeometry(.045, .14, 8), red); c.rotation.x = Math.PI; c.position.set(x, f * H + .14, z); c.userData.f = f; arrows.add(c); }
+    const eq = []; for (let f = 1; f <= NS; f++) { const a = new THREE.Group(); const sh = new THREE.Mesh(new THREE.CylinderGeometry(.025, .025, .5, 8), org); sh.rotation.z = Math.PI / 2; a.add(sh); const hd = new THREE.Mesh(new THREE.ConeGeometry(.07, .16, 10), org); hd.rotation.z = -Math.PI / 2; hd.position.x = .3; a.add(hd); a.position.set(-1.95, f * H - .07, 0); a.scale.setScalar(.6 + f * .25); g.add(a); eq.push(a); }
+    const lb = label('Column C2 · 450 × 450 · OK', { size: .13 }); lb.position.set(.2, 3.25, .9); g.add(lb);
+    const heat = new THREE.Color(), grey = new THREE.Color(0xc9c6c0), ok = new THREE.Color(0x2f9e5b);
+    return {
+      group: g, cam: [[3.6, 3.0, 4.6], [0, 1.35, 0]], dur: 10, steps: [0, .22, .45, .75],
+      update(p, t) {
+        const build = seg(p, .02, .22), loads = seg(p, .24, .42), ana = seg(p, .45, .74), chk = seg(p, .76, .9);
+        mem.forEach((m, i) => {
+          const d = m.userData, k = clamp01((build * (mem.length + 2) - i) / 2);
+          m.visible = k > 0; if (d.kind === 'col') m.scale.set(1, Math.max(.01, k), 1); else m.scale.setScalar(Math.max(.01, k));
+          const sway = ana * .16 * (.6 + .4 * Math.sin(t * 2.2)) * (1 - chk);
+          const yy = d.base.y / (NS * H); m.position.set(d.base.x + sway * yy * yy * 2.2, d.base.y, d.base.z);
+          heat.setHSL((1 - d.force) * .6, .85, .5); m.material.color.copy(grey).lerp(heat, ana).lerp(ok, chk); m.material.opacity = .25 + build * .6;
+        });
+        g.children.forEach(o => { if (o.userData && o.userData.slab) o.material.opacity = build * .35; });
+        red.opacity = loads * .9 * (1 - chk * .7); org.opacity = loads * .95 * (1 - chk * .7);
+        arrows.children.forEach((c, i) => { c.position.y = c.userData.f * H + .14 + .03 * Math.sin(t * 4 + i); });
+        eq.forEach((a, i) => { a.position.x = -1.95 + .05 * Math.sin(t * 3 + i); });
+        lb.visible = p > .8;
+      },
+      read(p) {
+        const n = Math.round(seg(p, .02, .22) * 33);
+        if (p < .24) return { k: 'Members modelled', v: n, u: '', sub: 'Columns, beams and slabs from the architectural plan' };
+        if (p < .45) return { k: 'Loads applied', v: fmt(4 + seg(p, .24, .42) * 9.5, 1), u: 'kN/m²', sub: 'Dead + live load (IS 875) · seismic Zone II (IS 1893)' };
+        if (p < .76) return { k: 'Max storey drift', v: fmt(seg(p, .45, .74) * 2.9, 1), u: 'mm', sub: 'Forces in every member · red = most stressed' };
+        return { k: 'Members checked', v: 33, u: '/ 33', sub: 'Sizes and steel chosen so every member passes', ok: p > .86 ? 'Design complete · drawings issued (illustrative)' : '' };
+      },
+      chart: { x: 'Analysis', y: 'Utilisation', f: u => u < .7 ? .35 + u * .9 : .98 - (u - .7) * 1.2, u: p => seg(p, .45, .9) },
+    };
+  },
+  detail() {
+    const g = new THREE.Group(); floor(g, 7, 5);
+    const ghost = new THREE.MeshStandardMaterial({ color: 0xc9c6c0, roughness: .8, transparent: true, opacity: .55, depthWrite: false });
+    const colC = B(.6, 3.2, .6, ghost, 0, 1.6, 0, true, g), beamC = B(2.4, .62, .46, ghost, 1.5, 2.0, 0, true, g);
+    const steel = M(0x7b4a33, { metalness: .45, roughness: .5 }), tieM = M(0x9a6448, { metalness: .4, roughness: .5 }), hot = M(0xf2b01e, { roughness: .5 });
+    const cb = [], bb = [], ties = [], st = [];
+    [[-.22, -.22], [.22, -.22], [.22, .22], [-.22, .22], [0, -.22], [0, .22], [-.22, 0], [.22, 0]].forEach(([x, z]) => cb.push(Cy(.025, .025, 3.2, steel, x, 1.6, z, 8, false, g)));
+    [[.24, -.15], [.24, 0], [.24, .15], [-.24, -.15], [-.24, .15]].forEach(([dy, z]) => { const b = Cy(.022, .022, 2.6, steel, 1.45, 2.0 + dy, z, 8, false, g); b.rotation.z = Math.PI / 2; bb.push(b); });
+    const loop = (w, d, th, mat) => { const o = new THREE.Group(); [[0, d / 2, w, th, th], [0, -d / 2, w, th, th], [w / 2, 0, th, th, d], [-w / 2, 0, th, th, d]].forEach(([x, z, a, b, c]) => { const m = new THREE.Mesh(new THREE.BoxGeometry(a, b, c), mat); m.position.set(x, 0, z); m.castShadow = true; o.add(m); }); g.add(o); return o; };
+    for (let y = .15; y < 3.15;) { const dense = y > 1.1 && y < 2.9; const t2 = loop(.5, .5, .022, dense ? hot : tieM); t2.position.set(0, y, 0); ties.push(t2); y += dense ? .1 : .22; }
+    for (let x = .45; x < 2.7;) { const dense = x < 1.05; const s2 = loop(.54, .38, .02, dense ? hot : tieM); s2.rotation.z = Math.PI / 2; s2.position.set(x, 2.0, 0); st.push(s2); x += dense ? .1 : .2; }
+    const lb = label('Closer ties at the joint (IS 13920)', { size: .13 }); lb.position.set(-.2, 3.45, .5); g.add(lb);
+    return {
+      group: g, cam: [[3.4, 3.2, 4.2], [.9, 1.8, 0]], dur: 9, steps: [0, .18, .42, .62, .86],
+      update(p) {
+        const fade = seg(p, .02, .16); ghost.opacity = .55 - fade * .42;
+        const up = ease(seg(p, .18, .4)); cb.forEach((b, i) => { b.scale.y = Math.max(.01, up); b.position.y = 1.6 * Math.max(.01, up); });
+        const sl = ease(seg(p, .42, .6)); bb.forEach(b => { b.position.x = 1.45 + (1 - sl) * 2.6; b.visible = sl > 0; });
+        const tk = seg(p, .62, .84); ties.forEach((o, i) => o.visible = tk * ties.length > i); const sk = seg(p, .66, .86); st.forEach((o, i) => o.visible = sk * st.length > i);
+        lb.visible = p > .8;
+      },
+      read(p) { const n = Math.round(seg(p, .18, .4) * 8 + seg(p, .42, .6) * 5 + seg(p, .62, .84) * ties.length + seg(p, .66, .86) * st.length); return { k: 'Bars & ties placed', v: n, u: '', sub: p < .42 ? 'Column: 8 vertical bars' : p < .62 ? 'Beam: top and bottom bars anchored into the column' : 'Ties and stirrups — closer near the joint for earthquakes', ok: p > .88 ? 'Detail + bar bending schedule ready (illustrative)' : '' }; },
+      chart: { x: 'Detailing', y: 'Steel placed', f: u => ease(u), u: p => seg(p, .18, .86) },
+    };
+  },
+  /* still-only: sampling on site with people */
+  samplesite() {
+    const g = new THREE.Group();
+    const gr = B(6.4, .5, 4.4, hatchMat(0xb7663d, 0x96502e, 'diag', 3, 1), 0, -.25, 0, true, g); gr.castShadow = false;
+    B(6.4, .04, 4.4, M(0xd9c7a3, { roughness: 1 }), 0, .02, 0, false, g).castShadow = false;
+    const crew = createPeople(g, 6);
+    const a = crew.add({ x: -.6, z: .2, ry: .5, s: 1.0 }), b = crew.add({ x: 1.5, z: -.4, ry: -.6, s: 1.0, kind: 'engineer', helmet: 0xf4f4f0 });
+    crew.pose(a, { drop: .42, legL: 1.4, kneeL: 2.2, legR: 1.1, kneeR: 2.1, lean: .8, nod: .4, armL: 1.1, armR: 1.25, elbL: .7, elbR: .5 });
+    crew.pose(b, { armL: .8, elbL: 1.4, armR: .4, elbR: 1.5, nod: .4 });
+    const pad = new THREE.Mesh(new THREE.BoxGeometry(.2, .02, .27), M(0x2a3140)); b.haL.add(pad); pad.position.set(0, -.02, .05);
+    const kraft = M(0xc9a36b, { roughness: 1 });
+    for (let i = 0; i < 4; i++) { const bg = mesh(new RoundedBoxGeometry(.32, .38, .26, 3, .07), kraft, -1.6 + (i % 2) * .38, .21, -.9 - Math.floor(i / 2) * .32, false, g); const tg = B(.14, .08, .01, M(0xffffff), 0, .05, .135, false, bg); }
+    const auger = Cy(.02, .02, .9, metal(0x8a929c), -.2, .45, .55, 8, false, g); auger.rotation.z = .4;
+    for (let i = 0; i < 3; i++) { const mo = B(.3, .3, .3, metal(0x2b2f36), .4 + i * .38, .17, 1.2, true, g); B(.26, .02, .26, M(0x9d9a94), 0, .14, 0, false, mo); }
+    const crate = B(.8, .36, .5, M(0x2f8fc9), 1.9, .2, .9, true, g); B(.82, .05, .52, M(0xf4f4f0), 0, .2, 0, false, crate);
+    const flag = Cy(.015, .015, 1.2, M(0xf3f0ea), -2.4, .6, 1.3, 6, false, g); B(.32, .2, .01, M(0xf2b01e), -2.24, 1.08, 1.3, false, g);
+    crew.sync();
+    return { group: g, cam: [[3.0, 2.6, 4.2], [0, .6, 0]], dur: 1, steps: [0], update() { crew.sync(); }, read() { return { k: '', v: '', u: '', sub: '' }; }, chart: { x: '', y: '', f: () => 0, u: () => 0 } };
+  },
+  /* still-only: testing in the NABL lab */
+  nabllab() {
+    const g = new THREE.Group();
+    const tile = canvasTex(256, 256, (c, w, h) => { c.fillStyle = '#e9edf1'; c.fillRect(0, 0, w, h); c.strokeStyle = '#cdd4dc'; c.lineWidth = 3; for (let i = 0; i <= 4; i++) { c.beginPath(); c.moveTo(i * 64, 0); c.lineTo(i * 64, h); c.moveTo(0, i * 64); c.lineTo(w, i * 64); c.stroke(); } }, 4, 3);
+    const fl = B(7, .2, 5, new THREE.MeshStandardMaterial({ map: tile, roughness: .7 }), 0, -.1, 0, false, g); fl.castShadow = false;
+    const m = new THREE.Group(); m.position.set(-1.2, 0, -.4); m.scale.setScalar(.62); g.add(m);
+    const rig = ctm(m, { ramTop: 1.0, crossY: 2.5 }); B(.6, .6, .6, M(0xc9c6c0), 0, .3, 0, true, rig.ram);
+    // bench with sieve stack + monitor
+    B(2.2, .08, .9, M(0xf4f4f0), 1.5, .95, -.6, true, g); [[-1, -.4], [1, -.4], [-1, .4], [1, .4]].forEach(([a, b]) => B(.06, .92, .06, metal(0x8a929c), 1.5 + a, .46, -.6 + b, false, g));
+    for (let i = 0; i < 5; i++) Cy(.22, .22, .09, metal(i % 2 ? 0xc9a24a : 0xb08a3a), .9, 1.04 + i * .095, -.6, 28, false, g);
+    const scr = canvasTex(256, 160, (c, w, h) => { c.fillStyle = '#0f2a44'; c.fillRect(0, 0, w, h); c.strokeStyle = '#f2b01e'; c.lineWidth = 4; c.beginPath(); for (let x = 0; x < w - 30; x++) { const u = x / (w - 30); c.lineTo(15 + x, h - 20 - (h - 50) * (u < .8 ? Math.sin(u / .8 * Math.PI / 2) : 1 - (u - .8) * 1.5)); } c.stroke(); });
+    const mon = B(.8, .5, .04, [M(0x1c1d20), M(0x1c1d20), M(0x1c1d20), M(0x1c1d20), new THREE.MeshBasicMaterial({ map: scr }), M(0x1c1d20)], 1.85, 1.35, -.85, true, g); mon.rotation.y = -.25;
+    Cy(.03, .03, .3, M(0x1c1d20), 1.85, 1.08, -.88, 8, false, g);
+    // curing shelves with cubes
+    const sh = new THREE.Group(); sh.position.set(-2.9, 0, -1.6); g.add(sh);
+    [.05, .6, 1.15].forEach(y => { B(1.4, .04, .5, metal(0x8a929c), 0, y, 0, false, sh); for (let i = 0; i < 4; i++) B(.24, .24, .24, M(0xc9c6c0), -.5 + i * .33, y + .14, 0, true, sh); });
+    [[-.7, -.25], [.7, -.25], [-.7, .25], [.7, .25]].forEach(([a, b]) => B(.04, 1.4, .04, metal(0x8a929c), a, .7, b, false, sh));
+    const crew = createPeople(g, 4);
+    const tech = crew.add({ x: .25, z: .55, ry: -2.6, kind: 'lab' }), an = crew.add({ x: 1.6, z: .15, ry: Math.PI + .2, kind: 'lab' });
+    crew.pose(tech, { armR: 1.0, elbR: .9, armL: .5, elbL: .8, nod: .2, look: -.3 });
+    crew.pose(an, { armL: .9, elbL: 1.1, armR: 1.0, elbR: .9, lean: .2, nod: .35 });
+    crew.sync();
+    return { group: g, cam: [[2.6, 2.6, 4.4], [.2, .9, -.4]], dur: 1, steps: [0], update() { crew.sync(); }, read() { return { k: '', v: '', u: '', sub: '' }; }, chart: { x: '', y: '', f: () => 0, u: () => 0 } };
+  },
   /* ---------------- still-only scenes (used for illustrations) ---------------- */
   samples() {
     const g = new THREE.Group(); floor(g);

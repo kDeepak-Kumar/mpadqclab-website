@@ -1,6 +1,6 @@
 {
   "_help": "Edit these values when your NABL certificate is renewed. To show the certificate, upload it to the /docs folder with exactly the file name below (PDF or image). If the file is missing, the website hides the View/Download buttons automatically.",
-  "certificate_number": "TC-10775",
+  "certificate_number": "NABLT0726TS18813",
   "standard": "ISO/IEC 17025:2017",
   "field": "Testing",
   "issue_date": "01/07/2026",

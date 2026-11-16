@@ -1,25 +1,172 @@
 {
   "_help": "Clients shown on the Home page (featured: true) and the Projects page (all). To add a client, copy one block, change the name/sector, and keep the commas between blocks. Optional logo: upload an image to /img/clients/ and set \"logo\": \"img/clients/file-name.png\". Set \"show\": false to hide a client without deleting it.",
   "clients": [
-    { "name": "Tata Projects", "sector": "Infrastructure", "featured": true, "logo": "img/client-tata-projects.webp" },
-    { "name": "Microsoft India", "sector": "Corporate campus", "featured": true },
-    { "name": "GMR Infrastructure", "sector": "Infrastructure", "featured": true },
-    { "name": "Adani Group", "sector": "Infrastructure", "featured": true },
-    { "name": "UltraTech Cement", "sector": "Industrial", "featured": true },
-    { "name": "Foxconn Technology", "sector": "Industrial", "featured": true },
-    { "name": "My Home Group", "sector": "Real estate", "featured": true },
-    { "name": "Aparna Constructions", "sector": "Real estate", "featured": true },
-    { "name": "Ramky Infrastructure", "sector": "Infrastructure", "featured": true },
-    { "name": "Rajapushpa Properties", "sector": "Real estate", "featured": true },
-    { "name": "CISF", "sector": "Government", "featured": true },
-    { "name": "CDAC Hyderabad", "sector": "Government", "featured": true },
-    { "name": "Chettinad Cement", "sector": "Industrial" },
-    { "name": "Blue Dart Express", "sector": "Logistics" },
-    { "name": "Malla Reddy University", "sector": "Institutional" },
-    { "name": "Malabar Gold", "sector": "Commercial" },
-    { "name": "JC Brothers", "sector": "Commercial" },
-    { "name": "Ardee Engineering", "sector": "Industrial" },
-    { "name": "Suroj Buildtech", "sector": "Real estate" },
-    { "name": "Raghava Constructions", "sector": "Construction" }
+    {
+      "name": "Rajapushpa Properties",
+      "sector": "Real estate",
+      "featured": true,
+      "logo": "img/clients/rajapushpa-properties.webp"
+    },
+    {
+      "name": "Adani Group",
+      "sector": "Infrastructure",
+      "featured": true,
+      "logo": "img/clients/adani-group.webp"
+    },
+    {
+      "name": "Foxconn Technology",
+      "sector": "Industrial",
+      "featured": true,
+      "logo": "img/clients/foxconn-technology.webp"
+    },
+    {
+      "name": "Government of Andhra Pradesh",
+      "sector": "Government",
+      "featured": false,
+      "logo": "img/clients/government-of-andhra-pradesh.webp"
+    },
+    {
+      "name": "TSPSC",
+      "sector": "Government",
+      "featured": false,
+      "logo": "img/clients/tspsc.webp"
+    },
+    {
+      "name": "Singareni Collieries (SCCL)",
+      "sector": "Government",
+      "featured": true,
+      "logo": "img/clients/singareni-collieries-sccl.webp"
+    },
+    {
+      "name": "Microsoft India",
+      "sector": "Corporate campus",
+      "featured": true,
+      "logo": "img/clients/microsoft-india.webp"
+    },
+    {
+      "name": "Aparna Constructions",
+      "sector": "Real estate",
+      "featured": true,
+      "logo": "img/clients/aparna-constructions.webp"
+    },
+    {
+      "name": "GMR Infrastructure",
+      "sector": "Infrastructure",
+      "featured": true,
+      "logo": "img/clients/gmr-infrastructure.webp"
+    },
+    {
+      "name": "Ardee Engineering",
+      "sector": "Industrial",
+      "featured": false,
+      "logo": "img/clients/ardee-engineering.webp"
+    },
+    {
+      "name": "Tata Projects",
+      "sector": "Infrastructure",
+      "featured": true,
+      "logo": "img/clients/tata-projects.webp"
+    },
+    {
+      "name": "Malabar Gold & Diamonds",
+      "sector": "Commercial",
+      "featured": true,
+      "logo": "img/clients/malabar-gold-diamonds.webp"
+    },
+    {
+      "name": "Chettinad Cement",
+      "sector": "Industrial",
+      "featured": false,
+      "logo": "img/clients/chettinad-cement.webp"
+    },
+    {
+      "name": "Malla Reddy University",
+      "sector": "Institutional",
+      "featured": false,
+      "logo": "img/clients/malla-reddy-university.webp"
+    },
+    {
+      "name": "Ramky Estates",
+      "sector": "Real estate",
+      "featured": true,
+      "logo": "img/clients/ramky-estates.webp"
+    },
+    {
+      "name": "Blue Dart Express",
+      "sector": "Logistics",
+      "featured": false,
+      "logo": "img/clients/blue-dart-express.webp"
+    },
+    {
+      "name": "Megawide Construction",
+      "sector": "Construction",
+      "featured": true,
+      "logo": "img/clients/megawide-construction.webp"
+    },
+    {
+      "name": "Raghava Constructions",
+      "sector": "Construction",
+      "featured": false,
+      "logo": "img/clients/raghava-constructions.webp"
+    },
+    {
+      "name": "UltraTech Cement",
+      "sector": "Industrial",
+      "featured": true,
+      "logo": "img/clients/ultratech-cement.webp"
+    },
+    {
+      "name": "Leighton India",
+      "sector": "Construction",
+      "featured": true,
+      "logo": "img/clients/leighton-india.webp"
+    },
+    {
+      "name": "Vijay Nirman Company",
+      "sector": "Construction",
+      "featured": false,
+      "logo": "img/clients/vijay-nirman-company.webp"
+    },
+    {
+      "name": "CDAC Hyderabad",
+      "sector": "Government",
+      "featured": true,
+      "logo": "img/clients/cdac-hyderabad.webp"
+    },
+    {
+      "name": "NMDC",
+      "sector": "Government",
+      "featured": true,
+      "logo": "img/clients/nmdc.webp"
+    },
+    {
+      "name": "J.C. Brothers",
+      "sector": "Commercial",
+      "featured": false,
+      "logo": "img/clients/j-c-brothers.webp"
+    },
+    {
+      "name": "Palamuru University",
+      "sector": "Institutional",
+      "featured": false,
+      "logo": "img/clients/palamuru-university.webp"
+    },
+    {
+      "name": "CISF",
+      "sector": "Government",
+      "featured": true,
+      "logo": "img/clients/cisf.webp"
+    },
+    {
+      "name": "Suroj Buildtech",
+      "sector": "Real estate",
+      "featured": false,
+      "logo": "img/clients/suroj-buildtech.webp"
+    },
+    {
+      "name": "My Home Group",
+      "sector": "Real estate",
+      "featured": false
+    }
   ]
 }
