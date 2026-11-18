@@ -870,3 +870,5 @@ function init(section) {
   }
   window.__labDebug = { setP(p) { paused = true; pAt = p; setPlay(); }, load, still };
 }
+
+export { DEMOS };
